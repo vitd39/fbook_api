@@ -2,12 +2,13 @@
 
 namespace App\Eloquent;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -15,7 +16,14 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
+        'phone',
+        'code',
+        'position',
+        'role',
+        'office_id',
     ];
 
     /**
@@ -26,4 +34,41 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function setPasswordAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
+    public function avatar()
+    {
+        return $this->morphOne(Media::class, 'target');
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
+    }
+
+    public function books()
+    {
+        return $this->belongsToMany(Book::class)->withPivot('status', 'type');
+    }
+
+    public function reviews()
+    {
+        return $this->belongsToMany(Book::class)->withPivot('content', 'star');
+    }
+
+    public function suggestions()
+    {
+        return $this->hasMany(Suggestion::class);
+    }
+
+    public function owners()
+    {
+        return $this->hasMany(Book::class, 'owner_id');
+    }
 }
