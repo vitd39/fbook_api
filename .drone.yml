@@ -1,0 +1,30 @@
+build:
+  image: framgia/laravel-workspace
+  commands:
+    - cp .env.ci.example .env
+    - composer install
+    - php artisan key:generate
+    - mkdir -p storage
+    - mkdir storage/framework
+    - mkdir storage/framework/cache
+    - mkdir storage/framework/sessions
+    - mkdir storage/framework/views
+    - chmod -R 755 storage/*
+    - php artisan migrate
+    - php artisan passport:install
+    - framgia-ci test-connect 127.0.0.1 3306 60
+    - framgia-ci run
+
+compose:
+  database:
+    image: mysql
+    environment:
+      MYSQL_DATABASE: laravel_fbook_test
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+
+cache:
+  mount:
+    - vendor
+    - .git
