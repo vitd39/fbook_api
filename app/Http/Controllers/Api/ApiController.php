@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\Api\NotOwnerException;
 use App\Http\Controllers\AbstractController;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\Api\NotFoundException;
-use App\Exceptions\Api\NotFoundErrorException;
+use App\Exceptions\Api\UnknownException;
+use Exception;
+use DB;
+use Log;
+use App\Exceptions\Api\ActionException;
 
 abstract class ApiController extends AbstractController
 {
@@ -16,7 +20,7 @@ abstract class ApiController extends AbstractController
 
     protected $dataSelect = ['*'];
 
-    public function jsonRender($data = [])
+    protected function jsonRender($data = [])
     {
         $this->compacts['message'] = [
             'code' => 200,
@@ -28,15 +32,17 @@ abstract class ApiController extends AbstractController
         return response()->json($compacts);
     }
 
-    public function getData(array $params, $relations = [])
+    protected function getData(callable $callback, $code = 500)
     {
         try {
-            $items = $this->repository->getData($params, $relations, $this->dataSelect);
-        } catch (\Exception $e) {
-            throw new NotFoundErrorException($e->getMessage(), $e->getCode());
+            if (is_callable($callback)) {
+                call_user_func_array($callback, []);
+            }
+        } catch (Exception $e) {
+            throw new UnknownException($e->getMessage(), $e->getCode());
         }
 
-        return $items;
+        return $this->jsonRender();
     }
 
     public function show($id)
@@ -44,66 +50,74 @@ abstract class ApiController extends AbstractController
         try {
             $item = $this->repository->findOrFail($id);
             $this->before(__FUNCTION__, $item);
+
             $this->compacts['item'] = $item;
         } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
             throw new NotFoundException();
-        } catch (\Exception $e) {
-            throw new NotFoundErrorException($e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            throw new UnknownException($e->getMessage(), $e->getCode());
         }
     }
 
-    public function storeData(array $data, callable $callback = null)
+    protected function doAction(callable $callback, $action = null, $code = 500)
     {
+        DB::beginTransaction();
         try {
-            $entity = $this->repository->store($data);
-
             if (is_callable($callback)) {
-                call_user_func_array($callback, [$entity]);
+                call_user_func_array($callback, []);
             }
-        } catch (\Exception $e) {
-            throw new NotFoundErrorException($e->getMessage(), $e->getCode());
+
+            DB::commit();
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+
+            throw new NotFoundException();
+        } catch (NotOwnerException $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+
+            throw new NotOwnerException();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+
+            if (in_array($action, config('settings.action_exception_method'))) {
+                throw new ActionException($action);
+            }
+
+            throw new UnknownException($e->getMessage(), $e->getCode());
         }
 
         return $this->jsonRender();
     }
 
-    public function updateData(array $data, $id, callable $callback = null)
+    protected function requestAction(callable $callback, $action = null, $code = 500)
     {
         try {
-            $entity = $this->repository->findOrFail($id);
-            $this->before('update', $entity);
-
             if (is_callable($callback)) {
-                call_user_func_array($callback, [$entity]);
+                call_user_func_array($callback, []);
+            }
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
+            throw new NotFoundException();
+        } catch (NotOwnerException $e) {
+            Log::error($e->getMessage());
+
+            throw new NotOwnerException();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            if (in_array($action, config('settings.action_exception_method'))) {
+                throw new ActionException($action);
             }
 
-            $this->repository->update($entity, $data);
-
-        } catch (ModelNotFoundException $e) {
-            throw new NotFoundException();
-        } catch (\Exception $e) {
-            throw new NotFoundErrorException($e->getMessage(), $e->getCode());
-        }
-
-        return $this->jsonRender();
-    }
-
-    public function deleteData($id, callable $callback = null)
-    {
-        try {
-            $entity = $this->repository->findOrFail($id);
-            $this->before('delete', $entity);
-
-            if (is_callable($callback)) {
-                call_user_func_array($callback, [$entity]);
-            }
-
-            $this->repository->delete($entity);
-
-        } catch (ModelNotFoundException $e) {
-            throw new NotFoundException();
-        } catch (\Exception $e) {
-            throw new NotFoundErrorException($e->getMessage(), $e->getCode());
+            throw new UnknownException($e->getMessage(), $e->getCode());
         }
 
         return $this->jsonRender();
