@@ -13,7 +13,7 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->artisan('db:seed');
+        $this->artisan('migrate');
     }
 
     public function getHeaders($header = [])
