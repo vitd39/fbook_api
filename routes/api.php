@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 */
 
 Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], function () {
+
     Route::group(['namespace' => 'Auth'], function () {
         Route::post('register', ['as' => 'register', 'uses' => 'RegisterController@create']);
         Route::post('login', ['as' => 'login', 'uses' => 'LoginController@login']);
@@ -22,5 +23,6 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
 
     Route::group(['middleware' => ['auth:api']], function () {
         Route::resource('user', 'UserController');
+        Route::resource('books', 'BookController');
     });
 });
