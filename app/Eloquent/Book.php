@@ -4,6 +4,12 @@ namespace App\Eloquent;
 
 class Book extends AbstractEloquent
 {
+    const STATUS = [
+        'waiting' => 1,
+        'reading' => 2,
+        'done' => 3,
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -52,5 +58,23 @@ class Book extends AbstractEloquent
     public function media()
     {
         return $this->morphMany(Media::class, 'target');
+    }
+
+    public function image()
+    {
+        return $this->morphOne(Media::class, 'target')->where('type', Media::TYPE_IMAGE_BOOK);
+    }
+
+    public function scopeGetData($query, $field, $orderBy = 'DESC')
+    {
+        return $query->where(function ($query) use ($field) {
+            if ($field == 'count_view') {
+                $query->where('count_view', '>', 0);
+            }
+
+            if ($field == 'avg_star') {
+                $query->where('avg_star', '>', 0);
+            }
+        })->orderBy($field, $orderBy);
     }
 }

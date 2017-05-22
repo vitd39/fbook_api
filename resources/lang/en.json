@@ -32,5 +32,11 @@
   },
   "other_error": {
     "invalid": ":param is invalid value"
+  },
+  "title_key": {
+    "latest" : "Newest book",
+    "view" : "Most viewed book",
+    "rating" : "Rating book",
+    "waiting" : "Number of user waiting a book"
   }
 }
