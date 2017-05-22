@@ -17,7 +17,8 @@ Fbook - for sharing and discussing about book
 - cp .env.example .env
 - php artisan passport:install
 - php artisan key:generate
-- php artisan migrate:refresh --seed
+- php artisan migrate
+- php artisan db:seed
 
 ## Configs
 
@@ -28,6 +29,11 @@ Fbook - for sharing and discussing about book
 Config API_CLIENT_SECRET and API_CLIENT_id in .env 
 
 ## Testing
+**Prepare database**
+- php artisan migrate --database=mysql_test
+- php artisan db:seed --database=mysql_test
 
-- phpunit
-
+**Run**
+```
+$ ./vendor/bin/phpunit
+```
