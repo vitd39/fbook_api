@@ -21,6 +21,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'code',
+        'avatar',
         'position',
         'role',
         'office_id',
@@ -40,11 +41,6 @@ class User extends Authenticatable
         if ($value) {
             $this->attributes['password'] = bcrypt($value);
         }
-    }
-
-    public function avatar()
-    {
-        return $this->morphOne(Media::class, 'target');
     }
 
     public function office()
