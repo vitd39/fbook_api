@@ -16,6 +16,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     {
         $limit = config('paginate.book_home_limit');
 
+        /**
+         * keys must match with config:
+         * - view
+         * - waiting
+         * - rating
+         * - latest
+         */
         return [
             [
                 'key' => 'latest',
@@ -89,5 +96,22 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
 
         return $books;
+    }
+
+    public function getBooksByFields($with = [], $dataSelect = ['*'], $field)
+    {
+        switch ($field) {
+            case 'view':
+                return $this->getBooksByCountView($with, $dataSelect);
+
+            case 'latest':
+                return $this->getLatestBooks($with, $dataSelect);
+
+            case 'rating':
+                return $this->getBooksByRating($with, $dataSelect);
+
+            case 'waiting':
+                return $this->getBooksByWaiting($with, $dataSelect);
+        }
     }
 }

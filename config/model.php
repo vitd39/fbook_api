@@ -1,7 +1,10 @@
 <?php
 
 return [
-    'status_book' => [
-        'available', 'no available'
+    'book' => [
+        'status' => ['available', 'no available'],
+    ],
+    'filter_books' => [
+        'view', 'waiting', 'rating', 'latest'
     ],
 ];
