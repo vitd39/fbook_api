@@ -58,7 +58,7 @@ $factory->define(App\Eloquent\Book::class, function (Faker\Generator $faker) {
         'total_page' => $faker->numberBetween(50, 100),
         'code' => str_random(50),
         'count_view' => $faker->numberBetween(20, 100),
-        'status' => $faker->randomElement(config('model.status_book')),
+        'status' => $faker->randomElement(config('model.book.status')),
         'office_id' => $faker->randomElement($officeId ?: $officeId = \App\Eloquent\Office::pluck('id')->toArray()),
         'category_id' => $faker->randomElement($categoryId ?: $categoryId = \App\Eloquent\Category::pluck('id')->toArray()),
     ];

@@ -22,8 +22,11 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('logout', ['as' => 'logout', 'uses' => 'LoginController@logout']);
     });
 
-    Route::group(['middleware' => ['auth:api']], function () {
+    /*Route::group(['middleware' => ['auth:api']], function () {
         Route::resource('user', 'UserController');
         Route::resource('books', 'BookController');
-    });
+    });*/
+
+    Route::resource('user', 'UserController');
+    Route::resource('books', 'BookController');
 });

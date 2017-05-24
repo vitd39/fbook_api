@@ -62,13 +62,13 @@ abstract class AbstractController extends Controller
             $object = $this->repository->model();
         }
 
-        if (!$this->user || $this->user->cannot($action, $object)) {
+        /*if (!$this->user || $this->user->cannot($action, $object)) {
             if (!$abort) {
                 return false;
             }
 
             throw new NotOwnerException();
-        }
+        }*/
 
         return true;
     }
