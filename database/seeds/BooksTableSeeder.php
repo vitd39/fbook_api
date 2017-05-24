@@ -24,12 +24,16 @@ class BooksTableSeeder extends Seeder
                 $star = $faker->numberBetween(1, 5);
 
                 $book->users()->attach($userId, [
-                    'status' => $faker->randomElement(config('model.status_book_user'))
+                    'status' => $faker->randomElement(Book::STATUS),
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
 
                 $book->reviews()->attach($userId, [
                     'content' => $faker->text(200),
                     'star' => $star,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
                 ]);
                 $stars[] = $star;
             }
@@ -42,6 +46,7 @@ class BooksTableSeeder extends Seeder
                 'name' => $faker->sentence(5),
                 'path' => 'images/picture.jpg',
                 'size' => $faker->numberBetween(500, 1024),
+                'type' => \App\Eloquent\Media::TYPE_IMAGE_BOOK,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
