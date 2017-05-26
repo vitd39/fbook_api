@@ -5,6 +5,10 @@ namespace App\Repositories;
 use App\Contracts\Repositories\BookRepository;
 use App\Eloquent\Book;
 use App\Filter\BookFilters;
+use App\Eloquent\BookUser;
+use App\Eloquent\User;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -157,4 +161,35 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 return $this->getBooksByWaiting($with, $dataSelect);
         }
     }
+
+    public function booking(Book $book, array $attributes)
+    {
+        $bookUpdate = array_only($attributes['item'], app(BookUser::class)->getFillable());
+        $checkUser = $book->users()->find($this->user->id);
+
+        if ($checkUser && $checkUser->pivot->status == config('model.status_book_user.reading')) {
+            $book->update(['status' => config('model.book.status.available')]);
+            $book->userReadingBook()->updateExistingPivot($this->user->id, ['status' => config('model.status_book_user.done')]);
+        } else {
+            $userWaiting = $book->users()
+                ->where('user_id', '<>', $this->user->id)
+                ->count();
+
+            if ($userWaiting) {
+                if (!$checkUser) {
+                    $book->users()->attach($this->user->id, [
+                        'user_id' => $this->user->id,
+                        'book_id' => $bookUpdate['book_id'],
+                        'status' => config('model.status_book_user.waiting')
+                    ]);
+                } else {
+                    $book->users()->updateExistingPivot($this->user->id, ['status' => config('model.status_book_user.waiting')]);
+                }
+            } else {
+                $book->users()->updateExistingPivot($this->user->id, ['book_user.status' => config('model.status_book_user.reading')]);
+                $book->where('id', $bookUpdate['book_id'])->update(['status' => config('model.book.status.unavailable')]);
+            }
+        }
+    }
+
 }

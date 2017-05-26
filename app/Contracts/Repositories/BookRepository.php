@@ -2,6 +2,8 @@
 
 namespace App\Contracts\Repositories;
 
+use App\Eloquent\Book;
+
 interface BookRepository extends AbstractRepository
 {
     public function getDataInHomepage($with = [], $dataSelect = ['*']);
@@ -9,4 +11,7 @@ interface BookRepository extends AbstractRepository
     public function getBooksByFields($with = [], $dataSelect = ['*'], $field);
 
     public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*']);
+
+    public function booking(Book $book, array $data);
+
 }
