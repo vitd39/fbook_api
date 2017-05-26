@@ -8,6 +8,7 @@ class Media extends Model
 {
     const TYPE_IMAGE_BOOK = 1;
 
+
     /**
      * The attributes that are mass assignable.
      *
@@ -26,5 +27,26 @@ class Media extends Model
     public function target()
     {
         return $this->morphTo();
+    }
+
+    private function responseMediaStorage($size = null)
+    {
+        return route('image',
+            ['path' => app()['glide.builder']->getUrl($this->path, ['p' => ($size) ?: null])]
+        );
+    }
+
+    public function getThumbPathAttribute()
+    {
+        if ($this->path) {
+            return $this->responseMediaStorage('thumbnail');
+        }
+
+        return $this->thumb_path;
+    }
+
+    public function getFullPathAttribute()
+    {
+        return $this->responseMediaStorage('medium');
     }
 }
