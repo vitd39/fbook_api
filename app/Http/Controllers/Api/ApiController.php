@@ -14,7 +14,7 @@ use App\Exceptions\Api\ActionException;
 
 abstract class ApiController extends AbstractController
 {
-    protected $guard = 'api';
+    protected $guard = 'fauth';
 
     protected $prefix = 'api.v1';
 
