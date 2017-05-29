@@ -12,8 +12,15 @@
         "laravel/framework": "5.4.*",
         "laravel/passport": "^2.0",
         "laravel/tinker": "~1.0",
-        "league/glide-laravel": "^1.0"
+        "league/glide-laravel": "^1.0",
+        "trandinhvi39/fauth": "dev-master" 
     },
+    "repositories": [
+        {
+            "url": "https://github.com/trandinhvi39/fauth",
+            "type": "git"
+        }
+    ],
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
