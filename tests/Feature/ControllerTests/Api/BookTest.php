@@ -131,4 +131,106 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(200);
     }
+
+    // Search
+    public function testListBookSearchSuccess()
+    {
+        $headers = $this->getHeaders();
+        $data = [
+            'search' => [
+                'field' => 'title',
+                'keyword' => 'a',
+            ],
+            'conditions' => [
+                [
+                    'category' => [
+                        1, 2, 3
+                    ]
+                ],
+                [
+                    'office' => [
+                        1, 2, 3
+                    ]
+                ],
+            ],
+            'sort' => [
+                'field' => 'Latest',
+                'order_by' => 'desc',
+            ],
+        ];
+
+        $response = $this->call('POST', 'api/v0/search', $data, [], [], $headers);
+        $response->assertJsonStructure([
+            'items' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testListBookSearchWithNotInput()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('POST', 'api/v0/search', [], [], [], $headers);
+        $response->assertJsonStructure([
+            'items' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testListBookSearchWithFieldInValid()
+    {
+        $headers = $this->getHeaders();
+        $data = [
+            'search' => [
+                'field' => 'a',
+                'keyword' => 'a',
+            ],
+            'conditions' => [
+                [
+                    'category' => [
+                        1, 2, 3
+                    ]
+                ],
+                [
+                    'office' => [
+                        1, 2, 3
+                    ]
+                ],
+            ],
+            'sort' => [
+                'field' => 'a',
+                'order_by' => 'a',
+            ],
+        ];
+
+        $response = $this->call('POST', 'api/v0/search', $data, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
 }

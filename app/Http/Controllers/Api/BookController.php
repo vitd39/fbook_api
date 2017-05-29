@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\BookRepository;
+use App\Http\Requests\Api\Book\SearchRequest;
 use App\Exceptions\Api\ActionException;
 use App\Http\Requests\Api\Book\IndexRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,11 +25,14 @@ class BookController extends ApiController
         'avg_star',
         'count_view',
         'status',
+        'category_id',
+        'office_id'
     ];
 
     public function index(IndexRequest $request)
     {
         $field = $request->input('field');
+
         if (!$field) {
             throw new ActionException;
         }
@@ -80,5 +84,16 @@ class BookController extends ApiController
         ]);
 
       return $this->jsonRender();
+    }
+
+    public function search(SearchRequest $request)
+    {
+        $data = $request->all();
+
+        return $this->getData(function() use($data) {
+            $this->compacts['items'] = $this->reFormatPaginate(
+                $this->repository->getDataSearch($data, ['image', 'category', 'office'], $this->select)
+            );
+        });
     }
 }
