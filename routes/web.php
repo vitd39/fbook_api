@@ -1,5 +1,6 @@
 <?php
-
+use Illuminate\Http\Request;
+use App\Contracts\Services\GlideInterface;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,3 +15,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('image/{path}', ['as' => 'image' , function (Request $request, GlideInterface $service, $path) {
+    $params = $request->all();
+    return $service->getImageResponse($path, $params);
+}])->where('path', '.+');
+
