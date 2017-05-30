@@ -233,4 +233,97 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(422);
     }
+
+    public function testBookingStatusDoneSuccess()
+    {
+        $headers = $this->getHeaders();
+        $book = Book::first();
+        $user = $book->userReadingBook()->first();
+
+        $newUpdate['book_id'] = $book->id;
+        $newUpdate['status'] = config('model.status_book_user.done');
+        $newUpdate['user_id'] = $user->id;
+
+        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testBookingStatusWaitingSuccess()
+    {
+        $headers = $this->getHeaders();
+        $book = Book::first();
+        $user = $book->usersWaitingBook()->first();
+
+        $newUpdate['book_id'] = $book->id;
+        $newUpdate['status'] = config('model.status_book_user.done');
+        $newUpdate['user_id'] = $user->id;
+
+        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testBookingWithNewUserSuccess()
+    {
+        $headers = $this->getHeaders();
+        $book = Book::first();
+        $user = $this->createUser();
+
+        $newUpdate['book_id'] = $book->id;
+        $newUpdate['status'] = config('model.status_book_user.done');
+        $newUpdate['user_id'] = $user->id;
+
+        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testBookingWithBookNotOwner()
+    {
+        $headers = $this->getHeaders();
+
+        $user = $this->createUser();
+
+        $newUpdate['book_id'] = 0;
+        $newUpdate['status'] = config('model.status_book_user.done');
+        $newUpdate['user_id'] = $user->id;
+
+        $response = $this->call('POST', route('api.v0.books.booking', 0), ['item' => $newUpdate], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
+
 }

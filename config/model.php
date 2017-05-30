@@ -2,7 +2,10 @@
 
 return [
     'book' => [
-        'status' => ['available', 'no available'],
+        'status' => [
+            'unavailable' => 0,
+            'available' => 1,
+        ],
         'fields' => [
             'title',
             'description',
@@ -30,5 +33,10 @@ return [
     ],
     'sort_type' => [
         'desc', 'asc'
+    ],
+    'status_book_user' => [
+        'waiting' => 1,
+        'reading' => 2,
+        'done'    => 3,
     ],
 ];
