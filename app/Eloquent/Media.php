@@ -24,6 +24,8 @@ class Media extends Model
         'target_id',
     ];
 
+    protected $hidden = ['target_id', 'target_type'];
+
     public function target()
     {
         return $this->morphTo();
