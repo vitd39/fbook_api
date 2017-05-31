@@ -28,6 +28,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
     });*/
 
     Route::resource('user', 'UserController');
+    Route::get('books/condition-sort', 'BookController@loadConditionSort');
     Route::resource('books', 'BookController');
     Route::post('search', ['as' => 'search', 'uses' => 'BookController@search']);
     Route::post('books/booking/{book_id}', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
