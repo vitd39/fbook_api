@@ -109,4 +109,10 @@ class BookController extends ApiController
         });
     }
 
+    public function loadConditionSort()
+    {
+        $this->compacts['items'] = array_values(config('model.filter_books'));
+
+        return $this->jsonRender();
+    }
 }

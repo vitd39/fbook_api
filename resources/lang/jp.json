@@ -34,9 +34,9 @@
     "invalid": ":param is invalid value"
   },
   "title_key": {
-    "latest" : "Newest book",
-    "view" : "Most viewed book",
-    "rating" : "Rating book",
-    "waiting" : "Number of user waiting a book"
+    "latest" : "The latest books",
+    "view" : "The most view books",
+    "rating" : "The rating books",
+    "waiting" : "The waiting books"
   }
 }
