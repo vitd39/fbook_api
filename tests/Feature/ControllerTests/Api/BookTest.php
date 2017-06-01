@@ -249,7 +249,7 @@ class BookTest extends TestCase
 
         $newUpdate['book_id'] = $book->id;
         $newUpdate['status'] = config('model.book_user.status.done');
-        $newUpdate['user_id'] = $user->id;
+        $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
 
         $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([

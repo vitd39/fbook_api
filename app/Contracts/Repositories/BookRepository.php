@@ -15,4 +15,6 @@ interface BookRepository extends AbstractRepository
     public function booking(Book $book, array $data);
 
     public function review($bookId, array $data);
+
+    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = []);
 }

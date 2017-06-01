@@ -82,15 +82,25 @@ class Book extends AbstractEloquent
         return $this->morphOne(Media::class, 'target')->where('type', Media::TYPE_IMAGE_BOOK);
     }
 
-    public function scopeGetData($query, $field, $orderBy = 'DESC')
+    public function scopeGetData($query, $field, $filters = [], $orderBy = 'DESC')
     {
-        return $query->where(function ($query) use ($field) {
-            if ($field == 'count_view') {
-                $query->where('count_view', '>', 0);
+        return $query->where(function ($query) use ($field, $filters) {
+            if ($field == config('model.filter_books.view.field')) {
+                $query->where(config('model.filter_books.view.field'), '>', 0);
             }
 
-            if ($field == 'avg_star') {
-                $query->where('avg_star', '>', 0);
+            if ($field == config('model.filter_books.rating.field')) {
+                $query->where(config('model.filter_books.rating.field'), '>', 0);
+            }
+
+            if ($filters) {
+                foreach ($filters as $value) {
+                    foreach ($value as $filter => $filterIds) {
+                        if (in_array($filter, config('model.filter_type'))) {
+                            $query->whereIn($filter . '_id', $filterIds);
+                        }
+                    }
+                }
             }
         })->orderBy($field, $orderBy);
     }
