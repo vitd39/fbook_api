@@ -5,10 +5,13 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Eloquent\Book;
+use Faker\Factory;
 
 class BookTest extends TestCase
 {
     use DatabaseTransactions;
+
+    /*TEST GET BOOKS*/
 
     public function testGetBooksByRatingSuccess()
     {
@@ -82,6 +85,8 @@ class BookTest extends TestCase
         ])->assertStatus(422);
     }
 
+    /*TEST SHOW DETAIL BOOK*/
+
     public function testShowBookWithBookInvalid()
     {
         $headers = $this->getHeaders();
@@ -132,7 +137,8 @@ class BookTest extends TestCase
         ])->assertStatus(200);
     }
 
-    // Search
+    /*TEST LIST BOOKS*/
+
     public function testListBookSearchSuccess()
     {
         $headers = $this->getHeaders();
@@ -234,6 +240,7 @@ class BookTest extends TestCase
         ])->assertStatus(422);
     }
 
+    /*TEST BOOKING BOOK*/
     public function testBookingStatusDoneSuccess()
     {
         $headers = $this->getHeaders();
@@ -265,7 +272,7 @@ class BookTest extends TestCase
 
         $newUpdate['book_id'] = $book->id;
         $newUpdate['status'] = config('model.book_user.status.done');
-        $newUpdate['user_id'] = $user->id;
+        $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
 
         $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
@@ -326,4 +333,62 @@ class BookTest extends TestCase
         ])->assertStatus(404);
     }
 
+    /*TEST REVIEW BOOK*/
+
+    public function testReviewBookSuccess()
+    {
+        $faker = Factory::create();
+        $headers = $this->getHeaders();
+        $book = factory(Book::class)->create();
+
+        $dataReview['content'] = $faker->sentence;
+        $dataReview['star'] = $faker->numberBetween(1, 5);
+
+        $response = $this->call('POST', route('api.v0.books.review', $book->id), ['item' => $dataReview], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testReviewBookWithFieldsNull()
+    {
+        $headers = $this->getHeaders();
+        $book = factory(Book::class)->create();
+
+        $response = $this->call('POST', route('api.v0.books.review', $book->id), ['item' => []], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
+
+    public function testReviewBookWithBookIdInvalid()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('POST', route('api.v0.books.review', 0), ['item' => []], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
 }

@@ -9,6 +9,8 @@ use App\Eloquent\BookUser;
 use App\Eloquent\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Event;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -185,4 +187,23 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
     }
 
+    public function review($bookId, array $data)
+    {
+        $book = $this->model()->findOrFail($bookId);
+        $dataReview = array_only($data, ['content', 'star']);
+        $dataReview['created_at'] = $dataReview['updated_at'] = Carbon::now();
+
+        $book->reviews()->attach([
+            $this->user->id => $dataReview
+        ]);
+
+        if (isset($dataReview['star'])) {
+            Event::fire('books.averageStar', [
+                [
+                    'book' => $book,
+                    'star' => $dataReview['star'],
+                ]
+            ]);
+        }
+    }
 }

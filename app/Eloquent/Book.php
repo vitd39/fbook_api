@@ -94,4 +94,9 @@ class Book extends AbstractEloquent
             }
         })->orderBy($field, $orderBy);
     }
+
+    public function getAvgStarAttribute($value)
+    {
+        return round($value, config('settings.round_average_star'));
+    }
 }

@@ -9,6 +9,7 @@ use App\Http\Requests\Api\Book\IndexRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Requests\Api\Book\BookingRequest;
 use App\Eloquent\Book;
+use App\Http\Requests\Api\Book\ReviewRequest;
 
 class BookController extends ApiController
 {
@@ -102,10 +103,11 @@ class BookController extends ApiController
     public function booking(BookingRequest $request, $id)
     {
         $data = $request->all();
+
         return $this->doAction(function () use ($data, $id) {
             $book = $this->repository->findOrfail($id);
 
-             $this->repository->booking($book, $data);
+            $this->repository->booking($book, $data);
         });
     }
 
@@ -114,5 +116,14 @@ class BookController extends ApiController
         $this->compacts['items'] = array_values(config('model.filter_books'));
 
         return $this->jsonRender();
+    }
+
+    public function review(ReviewRequest $request, $bookId)
+    {
+        $data = $request->item;
+
+        return $this->requestAction(function () use ($bookId, $data) {
+            $this->repository->review($bookId, $data);
+        });
     }
 }

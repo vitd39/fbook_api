@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\Book;
 
 use App\Http\Requests\Api\AbstractRequest;
 
-class BookingRequest extends AbstractRequest
+class ReviewRequest extends AbstractRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class BookingRequest extends AbstractRequest
     public function rules()
     {
         return [
-            'item.book_id' => 'required|numeric',
-            'item.status' => 'in:' . implode(',', array_values(config('model.book_user.status'))),
+            'item' => 'required|array|max:2',
+            'item.content' => 'required|max:255',
+            'item.star' => 'numeric|between:1,5',
         ];
     }
 }
