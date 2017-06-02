@@ -5,4 +5,5 @@ return [
         'store', 'storeMultiple', 'update', 'destroy', 'updateMultiple', 'restore', 'delete'
     ],
     'round_average_star' => 2,
+    'default_provider' => 'framgia',
 ];

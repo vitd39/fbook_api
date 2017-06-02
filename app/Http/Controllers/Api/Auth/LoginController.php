@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Exceptions\Api\UnknownException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use App\Contracts\Services\PassportInterface;
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\Api\Auth\LoginRequest;
+use Fauth;
 
 class LoginController extends ApiController
 {
     use AuthenticatesUsers;
+
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -19,6 +22,7 @@ class LoginController extends ApiController
     | to conveniently provide its functionality to your applications.
     |
     */
+
     /**
      * Create a new controller instance.
      *
@@ -28,5 +32,21 @@ class LoginController extends ApiController
     {
         parent::__construct();
         $this->middleware('guest', ['except' => 'logout']);
+    }
+
+    public function login(LoginRequest $request)
+    {
+        $data = $request->only(['email', 'password']);
+        $response = $request->has('refresh_token')
+            ? Fauth::driver(config('settings.default_provider'))->refreshToken($request->refresh_token)
+            : Fauth::driver(config('settings.default_provider'))->getTokenByPasswordGrant($data['email'], $data['password']);
+
+        if (isset($response['error'])) {
+            throw new UnknownException($response['error'], 404);
+        }
+
+        $this->compacts['fauth'] = $response;
+
+        return $this->jsonRender();
     }
 }
