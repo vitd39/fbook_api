@@ -34,5 +34,10 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+    'framgia' => [
+        'client_id' => env('FRAMGIA_CLIENT_ID'),
+        'client_secret' => env('FRAMGIA_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/callback/framgia',
+    ],
 
 ];
