@@ -47,7 +47,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         ];
     }
 
-    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = [])
+    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $attribute = [])
     {
         $limit = config('paginate.book_home_limit');
 
@@ -55,38 +55,29 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             [
                 'key' => config('model.filter_books.latest.key'),
                 'title' => config('model.filter_books.latest.title'),
-                'data' => $this->getLatestBooks($with, $dataSelect, $limit, $filters)->items(),
+                'data' => $this->getLatestBooks($with, $dataSelect, $limit, $attribute)->items(),
             ],
             [
                 'key' => config('model.filter_books.view.key'),
                 'title' => config('model.filter_books.view.title'),
-                'data' => $this->getBooksByCountView($with, $dataSelect, $limit, $filters)->items(),
+                'data' => $this->getBooksByCountView($with, $dataSelect, $limit, $attribute)->items(),
             ],
             [
                 'key' => config('model.filter_books.rating.key'),
                 'title' => config('model.filter_books.rating.title'),
-                'data' => $this->getBooksByRating($with, $dataSelect, $limit, $filters)->items(),
+                'data' => $this->getBooksByRating($with, $dataSelect, $limit, $attribute)->items(),
             ],
             [
                 'key' => config('model.filter_books.waiting.key'),
                 'title' => config('model.filter_books.waiting.title'),
-                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, $filters)->items(),
+                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, $attribute)->items(),
             ],
         ];
     }
 
     public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*'])
     {
-        $sortField = 'created_at';
-        $sortType = 'desc';
-
-        if (isset($attribute['sort']['field']) && $attribute['sort']['field']) {
-            $sortField = config('model.sort_field')[$attribute['sort']['field']];
-        }
-
-        if (isset($attribute['sort']['order_by']) && $attribute['sort']['order_by']) {
-            $sortType = $attribute['sort']['order_by'];
-        }
+        $input = $this->getDataInput($attribute);
 
         return $this->model()
             ->select($dataSelect)
@@ -113,39 +104,50 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     });
                 }
             })
-            ->orderBy($sortField, $sortType)
+            ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate(config('paginate.default'));
     }
 
-    protected function getLatestBooks($with = [], $dataSelect = ['*'], $limit = '', $filters = [])
+    protected function getLatestBooks($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
+        $input = $this->getDataInput($attribute);
+
         return $this->model()
             ->select($dataSelect)
             ->with($with)
-            ->getData(config('model.filter_books.latest.field'), $filters)
+            ->getData(config('model.filter_books.latest.field'), $input['filters'])
+            ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByCountView($with = [], $dataSelect = ['*'], $limit = '', $filters = [])
+    protected function getBooksByCountView($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
+        $input = $this->getDataInput($attribute);
+
         return $this->model()
             ->select($dataSelect)
             ->with($with)
-            ->getData(config('model.filter_books.view.field'), $filters)
+            ->getData(config('model.filter_books.view.field'), $input['filters'])
+            ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByRating($with = [], $dataSelect = ['*'], $limit = '', $filters = [])
+    protected function getBooksByRating($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
+        $input = $this->getDataInput($attribute);
+
         return $this->model()
             ->select($dataSelect)
             ->with($with)
-            ->getData(config('model.filter_books.rating.field'), $filters)
+            ->getData(config('model.filter_books.view.field'), $input['filters'])
+            ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $filters = [])
+    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
+        $input = $this->getDataInput($attribute);
+
         $numberOfUserWaitingBook = \DB::table('books')
             ->join('book_user', 'books.id', '=', 'book_user.book_id')
             ->select('book_user.book_id', \DB::raw('count(book_user.user_id) as count_waiting'))
@@ -159,7 +161,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->select($dataSelect)
             ->with($with)
             ->whereIn('id', $numberOfUserWaitingBook->pluck('book_id')->toArray())
-            ->getData('created_at', $filters)
+            ->getData('created_at', $input['filters'])
+            ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
 
         foreach ($books->items() as $book) {
@@ -169,20 +172,20 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $books;
     }
 
-    public function getBooksByFields($with = [], $dataSelect = ['*'], $field)
+    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = [])
     {
         switch ($field) {
             case config('model.filter_books.view.key'):
-                return $this->getBooksByCountView($with, $dataSelect);
+                return $this->getBooksByCountView($with, $dataSelect,'', $attribute);
 
             case config('model.filter_books.latest.key'):
-                return $this->getLatestBooks($with, $dataSelect);
+                return $this->getLatestBooks($with, $dataSelect, '', $attribute);
 
             case config('model.filter_books.rating.key'):
-                return $this->getBooksByRating($with, $dataSelect);
+                return $this->getBooksByRating($with, $dataSelect, '', $attribute);
 
             case config('model.filter_books.waiting.key'):
-                return $this->getBooksByWaiting($with, $dataSelect);
+                return $this->getBooksByWaiting($with, $dataSelect, '', $attribute);
         }
     }
 
@@ -234,5 +237,32 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 ]
             ]);
         }
+    }
+
+    protected function getDataInput($attribute = [])
+    {
+        $sort = [
+            'field' => 'created_at',
+            'type' => 'desc'
+        ];
+        $filters = [];
+
+        if (isset($attribute['sort']['field']) && $attribute['sort']['field']) {
+            $sort['field'] = config('model.sort_field')[$attribute['sort']['field']];
+        }
+
+        if (isset($attribute['sort']['key']) && $attribute['sort']['key']) {
+            $sort['field'] = config('model.sort_field')[$attribute['sort']['key']];
+        }
+
+        if (isset($attribute['sort']['order_by']) && $attribute['sort']['order_by']) {
+            $sort['type'] = $attribute['sort']['order_by'];
+        }
+
+        if (isset($attribute['filters']) && $attribute['filters']) {
+            $filters = $attribute['filters'];
+        }
+
+        return compact('sort', 'filters');
     }
 }

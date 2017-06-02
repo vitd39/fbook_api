@@ -17,4 +17,25 @@ abstract class AbstractRequest extends FormRequest
             ]
         ];
     }
+
+    public function all()
+    {
+        $input = parent::all();
+
+        if (isset($input['search']) && isset($input['search']['field'])) {
+            $input['search']['field'] = strtolower($input['search']['field']);
+        }
+
+        if (isset($input['sort'])) {
+            if (isset($input['sort']['field'])) {
+                $input['sort']['field'] = strtolower($input['sort']['field']);
+            }
+
+            if (isset($input['sort']['order_by'])) {
+                $input['sort']['order_by'] = strtolower($input['sort']['order_by']);
+            }
+        }
+
+        return $input;
+    }
 }

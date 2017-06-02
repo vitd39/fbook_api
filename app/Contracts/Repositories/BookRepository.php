@@ -8,7 +8,7 @@ interface BookRepository extends AbstractRepository
 {
     public function getDataInHomepage($with = [], $dataSelect = ['*']);
 
-    public function getBooksByFields($with = [], $dataSelect = ['*'], $field);
+    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = []);
 
     public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*']);
 
