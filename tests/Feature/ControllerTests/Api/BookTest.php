@@ -11,6 +11,20 @@ class BookTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function dataFilterBook()
+    {
+        return [
+            'filters' => [
+                ['category' => [2, 3]],
+                ['office' => [4, 5]],
+            ],
+            'sort' => [
+                'key' => 'title',
+                'order_by' => 'desc'
+            ],
+        ];
+    }
+
     /*TEST GET BOOKS*/
 
     public function testGetBooksByRatingSuccess()
@@ -383,6 +397,93 @@ class BookTest extends TestCase
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
+
+    /*TEST GET BOOKS*/
+
+    public function testGetBooksFilterByRatingSuccess()
+    {
+        $response = $this->call(
+            'POST', route('api.v0.books.filters', ['field' => 'rating']), $this->dataFilterBook(), [], [], $this->getHeaders()
+        );
+
+        $response->assertJsonStructure([
+            'item' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksFilterByLatestSuccess()
+    {
+        $response = $this->call(
+            'POST', route('api.v0.books.filters', ['field' => 'latest']), $this->dataFilterBook(), [], [], $this->getHeaders()
+        );
+
+        $response->assertJsonStructure([
+            'item' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksFilterByViewSuccess()
+    {
+        $response = $this->call(
+            'POST', route('api.v0.books.filters', ['field' => 'view']), $this->dataFilterBook(), [], [], $this->getHeaders()
+        );
+
+        $response->assertJsonStructure([
+            'item' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksFilterInvalid()
+    {
+        $input = [
+            'filters' => 'a',
+            'sort' => [
+                'key' => 'a',
+                'order_by' => 'a',
+            ],
+        ];
+        $response = $this->call('POST', route('api.v0.books.filters', ['field' => 'viewa']), $input, [], [], $this->getHeaders());
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description',
             ],
         ])->assertJson([
             'message' => [

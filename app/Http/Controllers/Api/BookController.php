@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\BookRepository;
+use App\Http\Requests\Api\Book\BookFilterRequest;
 use App\Http\Requests\Api\Book\SearchRequest;
 use App\Exceptions\Api\ActionException;
 use App\Http\Requests\Api\Book\IndexRequest;
@@ -30,6 +31,24 @@ class BookController extends ApiController
         'status',
         'category_id',
         'office_id'
+    ];
+
+    protected $imageSelect = [
+        'path',
+        'size',
+        'thumb_path',
+        'target_id',
+        'target_type',
+    ];
+
+    protected $categorySelect = [
+        'id',
+        'name',
+    ];
+
+    protected $officeSelect = [
+        'id',
+        'name',
     ];
 
     public function index(IndexRequest $request)
@@ -124,6 +143,31 @@ class BookController extends ApiController
 
         return $this->requestAction(function () use ($bookId, $data) {
             $this->repository->review($bookId, $data);
+        });
+    }
+
+    public function filter(BookFilterRequest $request)
+    {
+        $field = $request->input('field');
+
+        $input = $request->all();
+
+        $relations = [
+            'image' => function ($q) {
+                $q->select($this->imageSelect);
+            },
+            'category' => function ($q) {
+                $q->select($this->categorySelect);
+            },
+            'office' => function ($q) {
+                $q->select($this->officeSelect);
+            }
+        ];
+
+        return $this->getData(function () use ($relations, $field, $input) {
+            $data = $this->repository->getBooksByFields($relations, $this->select, $field, $input);
+
+            $this->compacts['item'] = $this->reFormatPaginate($data);
         });
     }
 }
