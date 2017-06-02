@@ -28,6 +28,20 @@ abstract class TestCase extends BaseTestCase
         return $this->transformHeadersToServerVars($headers);
     }
 
+    public function getFauthHeaders()
+    {
+        $response = $this->call('POST',
+            route('api.v0.login'),
+            ['refresh_token' => env('REFRESH_TOKEN_TEST')],
+            [],
+            [],
+            $this->getHeaders()
+        );
+        $accessToken = $response->baseResponse->original['fauth']['access_token'];
+
+        return $this->getHeaders(['Authorization' => $accessToken]);
+    }
+
     public function createUser()
     {
         return factory(User::class)->create();

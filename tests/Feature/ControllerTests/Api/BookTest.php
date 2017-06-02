@@ -257,7 +257,7 @@ class BookTest extends TestCase
     /*TEST BOOKING BOOK*/
     public function testBookingStatusDoneSuccess()
     {
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
         $book = Book::first();
         $user = $book->userReadingBook()->first();
 
@@ -280,7 +280,7 @@ class BookTest extends TestCase
 
     public function testBookingStatusWaitingSuccess()
     {
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
         $book = Book::first();
         $user = $book->usersWaitingBook()->first();
 
@@ -303,7 +303,7 @@ class BookTest extends TestCase
 
     public function testBookingWithNewUserSuccess()
     {
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
         $book = Book::first();
         $user = $this->createUser();
 
@@ -326,8 +326,7 @@ class BookTest extends TestCase
 
     public function testBookingWithBookNotOwner()
     {
-        $headers = $this->getHeaders();
-
+        $headers = $this->getFauthHeaders();
         $user = $this->createUser();
 
         $newUpdate['book_id'] = 0;
@@ -352,7 +351,7 @@ class BookTest extends TestCase
     public function testReviewBookSuccess()
     {
         $faker = Factory::create();
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
         $book = factory(Book::class)->create();
 
         $dataReview['content'] = $faker->sentence;
@@ -373,7 +372,7 @@ class BookTest extends TestCase
 
     public function testReviewBookWithFieldsNull()
     {
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
         $book = factory(Book::class)->create();
 
         $response = $this->call('POST', route('api.v0.books.review', $book->id), ['item' => []], [], [], $headers);
@@ -391,7 +390,7 @@ class BookTest extends TestCase
 
     public function testReviewBookWithBookIdInvalid()
     {
-        $headers = $this->getHeaders();
+        $headers = $this->getFauthHeaders();
 
         $response = $this->call('POST', route('api.v0.books.review', 0), ['item' => []], [], [], $headers);
         $response->assertJsonStructure([

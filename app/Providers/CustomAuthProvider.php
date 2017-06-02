@@ -3,8 +3,7 @@
 namespace App\Providers;
 
 use Fauth;
-use App\Eloquent\User;
-use App\Auth\CustomUserProvider;
+use App\Auth\CustomUser;
 use Illuminate\Support\ServiceProvider;
 
 class CustomAuthProvider extends ServiceProvider
@@ -16,10 +15,8 @@ class CustomAuthProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app['auth']->extend('custom', function() {
-            //call auth server to get user info from access token
-            $user = User::first();
-            return new CustomUserProvider($user);
+        $this->app['auth']->extend('custom', function () {
+            return new CustomUser();
         });
     }
 

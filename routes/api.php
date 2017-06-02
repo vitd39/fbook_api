@@ -23,22 +23,20 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('logout', ['as' => 'logout', 'uses' => 'LoginController@logout']);
     });
 
-    /*Route::group(['middleware' => ['auth:api']], function () {
-        Route::resource('user', 'UserController');
-        Route::resource('books', 'BookController');
-    });*/
-
-    Route::resource('user', 'UserController');
     Route::get('books/condition-sort', 'BookController@loadConditionSort');
     Route::resource('books', 'BookController');
     Route::post('books/filters', ['as' => 'books.filters', 'uses' => 'BookController@filter']);
     Route::post('search', ['as' => 'search', 'uses' => 'BookController@search']);
-    Route::post('books/booking/{book_id}', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
-    Route::post('books/review/{book_id}', ['as' => 'books.review', 'uses' => 'BookController@review']);
     Route::resource('categories', 'CategoryController', [
         'only' => ['index']
     ]);
     Route::resource('offices', 'OfficeController', [
         'only' => ['index']
     ]);
+
+    Route::group(['middleware' => 'fapi'], function () {
+        Route::resource('user', 'UserController');
+        Route::post('books/review/{book_id}', ['as' => 'books.review', 'uses' => 'BookController@review']);
+        Route::post('books/booking/{book_id}', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
+    });
 });
