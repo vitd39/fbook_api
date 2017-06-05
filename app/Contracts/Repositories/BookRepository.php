@@ -17,4 +17,6 @@ interface BookRepository extends AbstractRepository
     public function review($bookId, array $data);
 
     public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = []);
+
+    public function show($id);
 }

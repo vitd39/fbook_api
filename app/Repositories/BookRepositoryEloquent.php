@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\Api\NotFoundException;
+use App\Exceptions\Api\UnknownException;
+use Log;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -264,5 +268,39 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
 
         return compact('sort', 'filters');
+    }
+
+    public function show($id)
+    {
+        try {
+            $book = $this->model()->findOrFail($id);
+            
+            return $book->load(['image', 'reviewsDetailBook',
+                'userReadingBook' => function ($query) {
+                    $query->select('id', 'name', 'avatar');
+                },
+                'usersWaitingBook' => function($query) {
+                    $query->select('id', 'name', 'avatar');
+                    $query->orderBy('book_user.created_at', 'ASC');
+                },
+                'category' => function($query) {
+                    $query->select('id', 'name');
+                },
+                'office' => function($query) {
+                    $query->select('id', 'name');
+                },
+                'owner' => function($query) {
+                    $query->select('id', 'name');
+                },
+            ]);
+        } catch (ModelNotFoundException $e) {
+            Log::error($e->getMessage());
+
+            throw new NotFoundException();
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+
+            throw new UnknownException($e->getMessage(), $e->getCode());
+        }
     }
 }

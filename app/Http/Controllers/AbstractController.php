@@ -17,11 +17,15 @@ abstract class AbstractController extends Controller
 
     public function __construct($repository = null)
     {
-        if ($repository) {
-            $this->repositorySetup($repository);
-        }
+        $this->middleware(function ($request, $next) use ($repository) {
+            $this->user = Auth::guard($this->getGuard())->user();
 
-        $this->user = Auth::guard($this->getGuard())->user();
+            if ($repository) {
+                $this->repositorySetup($repository);
+            }
+
+            return $next($request);
+        });
     }
 
     public function repositorySetup($repository = null)
@@ -62,13 +66,13 @@ abstract class AbstractController extends Controller
             $object = $this->repository->model();
         }
 
-        /*if (!$this->user || $this->user->cannot($action, $object)) {
+        if (!$this->user || $this->user->cannot($action, $object)) {
             if (!$abort) {
                 return false;
             }
 
             throw new NotOwnerException();
-        }*/
+        }
 
         return true;
     }
