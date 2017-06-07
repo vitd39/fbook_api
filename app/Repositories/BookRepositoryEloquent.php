@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknownException;
 use Log;
+use App\Contracts\Repositories\MediaRepository;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -302,5 +303,31 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
 
             throw new UnknownException($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function store(array $attributes, MediaRepository $mediaRepository)
+    {
+        $dataBook = array_only($attributes, $this->model()->getFillable());
+        $dataBook['owner_id'] = $this->user->id;
+        $book = $this->model()->create($dataBook);
+
+        if (isset($attributes['medias'])) {
+            $dataMedias = [];
+
+            foreach ($attributes['medias'] as $media) {
+                $dataMedias[] = [
+                    'file' => $media['file'],
+                    'type' => config('model.media_type.image'),
+                ];
+            }
+
+            $mediaRepository->uploadAndSaveMedias(
+                $book,
+                $dataMedias,
+                strtolower(class_basename($this->model()))
+            );
+        }
+        
+        return $book->load('category', 'office', 'media');
     }
 }

@@ -60,4 +60,8 @@ return [
     'sort_type' => [
         'desc', 'asc'
     ],
+    'media_type' => [
+        'image' => 0,
+        'video' => 1,
+    ],
 ];

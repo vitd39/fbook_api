@@ -23,6 +23,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Contracts\Repositories\OfficeRepository::class,
             \App\Repositories\OfficeRepositoryEloquent::class,
         ],
+        'media' => [
+            \App\Contracts\Repositories\MediaRepository::class,
+            \App\Repositories\MediaRepositoryEloquent::class,
+        ],
     ];
 
     /**

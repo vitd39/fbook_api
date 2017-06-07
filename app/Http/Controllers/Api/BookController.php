@@ -11,14 +11,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Requests\Api\Book\BookingRequest;
 use App\Eloquent\Book;
 use App\Http\Requests\Api\Book\ReviewRequest;
+use App\Http\Requests\Api\Book\StoreRequest;
+use App\Contracts\Repositories\MediaRepository;
 
 class BookController extends ApiController
 {
-    public function __construct(BookRepository $repository)
-    {
-        parent::__construct($repository);
-    }
-
     protected $select = [
         'id',
         'title',
@@ -50,6 +47,11 @@ class BookController extends ApiController
         'id',
         'name',
     ];
+
+    public function __construct(BookRepository $repository)
+    {
+        parent::__construct($repository);
+    }
 
     public function index(IndexRequest $request)
     {
@@ -87,6 +89,15 @@ class BookController extends ApiController
         $this->compacts['item'] = $this->repository->show($id);
 
         return $this->jsonRender();
+    }
+
+    public function store(StoreRequest $request, MediaRepository $mediaRepository)
+    {
+        $data = $request->all();
+
+        return $this->doAction(function () use ($data, $mediaRepository) {
+            $this->compacts['item'] = $this->repository->store($data, $mediaRepository);
+        });
     }
 
     public function search(SearchRequest $request)

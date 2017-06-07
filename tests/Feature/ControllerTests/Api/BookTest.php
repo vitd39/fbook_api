@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Eloquent\Book;
 use Faker\Factory;
+use App\Eloquent\Category;
+use App\Eloquent\Office;
 
 class BookTest extends TestCase
 {
@@ -346,6 +348,29 @@ class BookTest extends TestCase
         ])->assertStatus(404);
     }
 
+    public function testBookingStatusWaitingWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $book = Book::first();
+        $user = $book->usersWaitingBook()->first();
+
+        $newUpdate['book_id'] = $book->id;
+        $newUpdate['status'] = config('model.book_user.status.done');
+        $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
+
+        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
     /*TEST REVIEW BOOK*/
 
     public function testReviewBookSuccess()
@@ -403,6 +428,28 @@ class BookTest extends TestCase
                 'code' => 422,
             ]
         ])->assertStatus(422);
+    }
+
+    public function testReviewBookWithGuest()
+    {
+        $faker = Factory::create();
+        $headers = $this->getHeaders();
+        $book = factory(Book::class)->create();
+
+        $dataReview['content'] = $faker->sentence;
+        $dataReview['star'] = $faker->numberBetween(1, 5);
+
+        $response = $this->call('POST', route('api.v0.books.review', $book->id), ['item' => $dataReview], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
     }
 
     /*TEST GET BOOKS*/
@@ -490,5 +537,66 @@ class BookTest extends TestCase
                 'code' => 422,
             ]
         ])->assertStatus(422);
+    }
+
+    /*TEST STORE BOOKS*/
+
+    public function testStoreBookSuccess()
+    {
+        $faker = Factory::create();
+        $headers = $this->getFauthHeaders();
+        $dataBook = factory(Book::class)->make()->toArray();
+        $dataBook['category_id'] = factory(Category::class)->create()->id;
+        $dataBook['office_id'] = factory(Office::class)->create()->id;
+
+        $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testStoreBookWithFieldsNull()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('POST', route('api.v0.books.store'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
+
+    public function testStoreBookWithGuest()
+    {
+        $faker = Factory::create();
+        $headers = $this->getHeaders();
+        $dataBook = factory(Book::class)->make()->toArray();
+        $dataBook['category_id'] = factory(Category::class)->create()->id;
+        $dataBook['office_id'] = factory(Office::class)->create()->id;
+
+        $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
     }
 }
