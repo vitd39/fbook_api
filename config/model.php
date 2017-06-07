@@ -55,7 +55,6 @@ return [
         'rating' => 'avg_star',
         'latest' => 'created_at',
         'view' => 'count_view',
-        'title' => 'title',
     ],
     'sort_type' => [
         'desc', 'asc'

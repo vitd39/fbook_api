@@ -4,11 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\BookRepository;
 use App\Eloquent\Book;
-use App\Filter\BookFilters;
 use App\Eloquent\BookUser;
-use App\Eloquent\User;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -165,8 +161,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->select($dataSelect)
             ->with($with)
             ->whereIn('id', $numberOfUserWaitingBook->pluck('book_id')->toArray())
-            ->getData('created_at', $input['filters'])
-            ->orderBy($input['sort']['field'], $input['sort']['type'])
+            ->getData($input['sort']['field'], $input['filters'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
 
         foreach ($books->items() as $book) {
@@ -252,11 +247,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         $filters = [];
 
         if (isset($attribute['sort']['field']) && $attribute['sort']['field']) {
-            $sort['field'] = config('model.sort_field')[$attribute['sort']['field']];
-        }
-
-        if (isset($attribute['sort']['key']) && $attribute['sort']['key']) {
-            $sort['field'] = config('model.sort_field')[$attribute['sort']['key']];
+            $sort['field'] = $attribute['sort']['field'];
         }
 
         if (isset($attribute['sort']['order_by']) && $attribute['sort']['order_by']) {
