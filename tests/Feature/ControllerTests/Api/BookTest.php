@@ -174,7 +174,7 @@ class BookTest extends TestCase
                 ],
             ],
             'sort' => [
-                'field' => 'Latest',
+                'field' => 'avg_star',
                 'order_by' => 'desc',
             ],
         ];
