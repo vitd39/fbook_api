@@ -11,6 +11,7 @@ use Exception;
 use DB;
 use Log;
 use App\Exceptions\Api\ActionException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class ApiController extends AbstractController
 {
@@ -121,5 +122,19 @@ abstract class ApiController extends AbstractController
         }
 
         return $this->jsonRender();
+    }
+
+    protected function reFormatPaginate(LengthAwarePaginator $paginate)
+    {
+        $currentPage = $paginate->currentPage();
+
+        return [
+            'total' => $paginate->total(),
+            'per_page' => $paginate->perPage(),
+            'current_page' => $currentPage,
+            'next_page' => ($paginate->lastPage() > $currentPage) ? $currentPage + 1 : null,
+            'prev_page' => $currentPage - 1 ?: null,
+            'data' => $paginate->items(),
+        ];
     }
 }

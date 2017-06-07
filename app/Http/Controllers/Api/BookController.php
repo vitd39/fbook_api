@@ -7,9 +7,7 @@ use App\Http\Requests\Api\Book\BookFilterRequest;
 use App\Http\Requests\Api\Book\SearchRequest;
 use App\Exceptions\Api\ActionException;
 use App\Http\Requests\Api\Book\IndexRequest;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Http\Requests\Api\Book\BookingRequest;
-use App\Eloquent\Book;
 use App\Http\Requests\Api\Book\ReviewRequest;
 use App\Http\Requests\Api\Book\StoreRequest;
 use App\Contracts\Repositories\MediaRepository;
@@ -68,20 +66,6 @@ class BookController extends ApiController
 
             $this->compacts['item'] = $this->reFormatPaginate($data);
         });
-    }
-
-    protected function reFormatPaginate(LengthAwarePaginator $paginate)
-    {
-        $currentPage = $paginate->currentPage();
-
-        return [
-            'total' => $paginate->total(),
-            'per_page' => $paginate->perPage(),
-            'current_page' => $currentPage,
-            'next_page' => ($paginate->lastPage() > $currentPage) ? $currentPage + 1 : null,
-            'prev_page' => ($currentPage > 1) ? $currentPage - 1 : null,
-            'data' => $paginate->items(),
-        ];
     }
 
     public function show($id)
