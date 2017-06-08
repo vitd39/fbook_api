@@ -11,6 +11,7 @@ use App\Http\Requests\Api\Book\BookingRequest;
 use App\Http\Requests\Api\Book\ReviewRequest;
 use App\Http\Requests\Api\Book\StoreRequest;
 use App\Contracts\Repositories\MediaRepository;
+use App\Http\Requests\Api\Book\UpdateRequest;
 
 class BookController extends ApiController
 {
@@ -82,6 +83,17 @@ class BookController extends ApiController
         return $this->doAction(function () use ($data, $mediaRepository) {
             $this->compacts['item'] = $this->repository->store($data, $mediaRepository);
         });
+    }
+
+    public function update(UpdateRequest $request, $id, MediaRepository $mediaRepository)
+    {
+        $data = $request->all();
+
+        return $this->doAction(function () use ($data, $id, $mediaRepository) {
+            $book = $this->repository->findOrFail($id);
+            $this->before('update', $book);
+            $this->compacts['item'] = $this->repository->update($data, $book, $mediaRepository);
+        }, __FUNCTION__);
     }
 
     public function search(SearchRequest $request)
