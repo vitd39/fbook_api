@@ -25,4 +25,20 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
         return $currentUser;
     }
+
+    public function getReadingBooksByCurrentUser($select = ['*'], $with = [])
+    {
+        return $this->getDataBookOfUser(config('model.book_user.status.reading'), $select = ['*'], $with = []);
+    }
+
+    protected function getDataBookOfUser($status, $select = ['*'], $with = [])
+    {
+        if (in_array($status, array_values(config('model.book_user.status')))) {
+            return $this->user->books()
+                ->select($select)
+                ->with($with)
+                ->wherePivot('status', $status)
+                ->paginate(config('paginate.default'));
+        }
+    }
 }
