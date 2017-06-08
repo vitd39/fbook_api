@@ -11,4 +11,17 @@ class BookPolicy extends AbstractPolicy
     {
         return true;
     }
+
+    public function update(User $user, Book $ability)
+    {
+        if (! isset($ability->owner_id)) {
+            return false;
+        }
+
+        if ($user->id !== $ability->owner_id) {
+            return false;
+        }
+
+        return true;
+    }
 }

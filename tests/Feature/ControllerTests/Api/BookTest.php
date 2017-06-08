@@ -27,7 +27,7 @@ class BookTest extends TestCase
         ];
     }
 
-    /*TEST GET BOOKS*/
+    /* TEST GET BOOKS */
 
     public function testGetBooksByRatingSuccess()
     {
@@ -101,7 +101,7 @@ class BookTest extends TestCase
         ])->assertStatus(422);
     }
 
-    /*TEST SHOW DETAIL BOOK*/
+    /* TEST SHOW DETAIL BOOK */
 
     public function testShowBookWithBookInvalid()
     {
@@ -153,7 +153,7 @@ class BookTest extends TestCase
         ])->assertStatus(200);
     }
 
-    /*TEST LIST BOOKS*/
+    /* TEST LIST BOOKS */
 
     public function testListBookSearchSuccess()
     {
@@ -256,7 +256,7 @@ class BookTest extends TestCase
         ])->assertStatus(422);
     }
 
-    /*TEST BOOKING BOOK*/
+    /* TEST BOOKING BOOK */
     public function testBookingStatusDoneSuccess()
     {
         $headers = $this->getFauthHeaders();
@@ -371,7 +371,7 @@ class BookTest extends TestCase
         ])->assertStatus(401);
     }
 
-    /*TEST REVIEW BOOK*/
+    /* TEST REVIEW BOOK */
 
     public function testReviewBookSuccess()
     {
@@ -452,7 +452,7 @@ class BookTest extends TestCase
         ])->assertStatus(401);
     }
 
-    /*TEST GET BOOKS*/
+    /* TEST GET BOOKS */
 
     public function testGetBooksFilterByRatingSuccess()
     {
@@ -539,11 +539,10 @@ class BookTest extends TestCase
         ])->assertStatus(422);
     }
 
-    /*TEST STORE BOOKS*/
+    /* TEST STORE BOOKS */
 
     public function testStoreBookSuccess()
     {
-        $faker = Factory::create();
         $headers = $this->getFauthHeaders();
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
@@ -581,13 +580,74 @@ class BookTest extends TestCase
 
     public function testStoreBookWithGuest()
     {
-        $faker = Factory::create();
         $headers = $this->getHeaders();
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    /* TEST UPDATE BOOKS */
+
+    public function testUpdateBookNotOwner()
+    {
+        $headers = $this->getFauthHeaders();
+        $bookId = factory(Book::class)->create()->id;
+        $dataBook = factory(Book::class)->make()->toArray();
+        $dataBook['category_id'] = factory(Category::class)->create()->id;
+        $dataBook['office_id'] = factory(Office::class)->create()->id;
+
+        $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 400,
+            ]
+        ])->assertStatus(400);
+    }
+
+    public function testUpdateBookWithFieldsNull()
+    {
+        $headers = $this->getFauthHeaders();
+        $bookId = factory(Book::class)->create()->id;
+
+        $response = $this->call('PUT', route('api.v0.books.update', $bookId), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
+
+    public function testUpdateBookWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $bookId = factory(Book::class)->create()->id;
+        $dataBook = factory(Book::class)->make()->toArray();
+        $dataBook['category_id'] = factory(Category::class)->create()->id;
+        $dataBook['office_id'] = factory(Office::class)->create()->id;
+
+        $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'

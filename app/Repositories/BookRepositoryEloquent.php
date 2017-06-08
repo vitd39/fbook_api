@@ -12,9 +12,13 @@ use App\Exceptions\Api\NotFoundException;
 use App\Exceptions\Api\UnknownException;
 use Log;
 use App\Contracts\Repositories\MediaRepository;
+use App\Exceptions\Api\ActionException;
+use App\Traits\Repositories\UploadableTrait;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
+    use UploadableTrait;
+
     public function model()
     {
         return new \App\Eloquent\Book;
@@ -296,6 +300,43 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
     }
 
+    /**
+     * Upload and save medias when user add new book
+     *
+     * @param  array $medias
+     * @param  App\Eloquent\Book $book
+     * @param  App\Contracts\Repositories\MediaRepository mediaRepository
+     * @return void
+     */
+    protected function uploadAndSaveMediasForBook(array $medias, Book $book, MediaRepository $mediaRepository)
+    {
+        $dataMedias = [];
+
+        foreach ($medias as $media) {
+            $dataMedias[] = [
+                'file' => $media['file'],
+                'type' => config('model.media_type.image'),
+            ];
+        }
+
+        $mediaRepository->uploadAndSaveMedias(
+            $book,
+            $dataMedias,
+            strtolower(class_basename($this->model()))
+        );
+    }
+
+    /**
+     * Get book info by code
+     *
+     * @param  string $code
+     * @return App\Eloquent\Book or null
+     */
+    protected function getBookByCode(string $code)
+    {
+        return $this->model()->whereCode($code)->first();
+    }
+
     public function store(array $attributes, MediaRepository $mediaRepository)
     {
         $dataBook = array_only($attributes, $this->model()->getFillable());
@@ -303,20 +344,30 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         $book = $this->model()->create($dataBook);
 
         if (isset($attributes['medias'])) {
-            $dataMedias = [];
+            $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
+        }
+        
+        return $book->load('category', 'office', 'media');
+    }
 
-            foreach ($attributes['medias'] as $media) {
-                $dataMedias[] = [
-                    'file' => $media['file'],
-                    'type' => config('model.media_type.image'),
-                ];
+    public function update(array $attributes, Book $book, MediaRepository $mediaRepository)
+    {
+        $dataBook = array_only($attributes, $this->model()->getFillable());
+        $bookWithCurrentCode = $this->getBookByCode($attributes['code']);
+
+        if ($bookWithCurrentCode && $bookWithCurrentCode->id != $book->id) {
+            throw new ActionException(__FUNCTION__);
+        }
+
+        $book->update($dataBook);
+
+        if (isset($attributes['medias'])) {
+            foreach ($book->media as $media) {
+                $this->destroyFile($media->path);
             }
 
-            $mediaRepository->uploadAndSaveMedias(
-                $book,
-                $dataMedias,
-                strtolower(class_basename($this->model()))
-            );
+            $book->media()->delete();
+            $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
         }
         
         return $book->load('category', 'office', 'media');
