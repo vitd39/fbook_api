@@ -23,7 +23,7 @@ return [
         'status' => [
             'waiting' => 1,
             'reading' => 2,
-            'done'    => 3,
+            'done' => 3,
         ]
     ],
     'filter_books' => [
@@ -63,4 +63,5 @@ return [
         'image' => 0,
         'video' => 1,
     ],
+    'user_sharing_book' => 'sharing'
 ];
