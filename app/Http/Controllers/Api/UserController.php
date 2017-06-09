@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\UserRepository;
+use App\Exceptions\Api\ActionException;
 
 class UserController extends ApiController
 {
@@ -57,10 +58,17 @@ class UserController extends ApiController
         ];
     }
 
-    public function reading()
+    public function getBook($action)
     {
-        return $this->getData(function () {
-            $data = $this->repository->getReadingBooksByCurrentUser($this->bookSelect, $this->relations);
+        if (
+            !in_array($action, array_keys(config('model.book_user.status')))
+            && $action != config('model.user_sharing_book')
+        ) {
+            throw new ActionException;
+        }
+
+        return $this->getData(function () use ($action) {
+            $data = $this->repository->getDataBookByCurrentUser($action, $this->bookSelect, $this->relations);
 
             $this->compacts['items'] = $this->reFormatPaginate($data);
         });

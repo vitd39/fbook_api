@@ -2,20 +2,24 @@
 
 namespace Tests\Feature;
 
+use Faker\Factory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use App\Eloquent\Book;
-use Faker\Factory;
 
 class UserTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /*TEST GET MY READING BOOKS*/
+    /* TEST GET BOOKS OF CURRENT USER */
 
-    public function testGetReadingBooksByCurrentUserSuccess()
+    public function testGetDataBookByCurrentUserSuccess()
     {
-        $response = $this->call('GET', route('api.v0.users.bookReading', []), [], [], [], $this->getFauthHeaders());
+        $faker = Factory::create();
+        $action = $faker->randomElement(array_merge(
+            [config('model.user_sharing_book')], array_keys(config('model.book_user.status'))
+        ));
+
+        $response = $this->call('GET', route('api.v0.users.book', $action), [], [], [], $this->getFauthHeaders());
 
         $response->assertJsonStructure([
             'items' => [
@@ -32,9 +36,9 @@ class UserTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testGetReadingBooksWithGuest()
+    public function testGetDataBookByCurrentUserWithGuest()
     {
-        $response = $this->call('GET', route('api.v0.users.bookReading', []), [], [], [], $this->getHeaders());
+        $response = $this->call('GET', route('api.v0.users.book', 'action'), [], [], [], $this->getHeaders());
 
         $response->assertJsonStructure([
             'message' => [
@@ -46,5 +50,22 @@ class UserTest extends TestCase
                 'code' => 401,
             ]
         ])->assertStatus(401);
+    }
+
+    public function testGetDataBookByCurrentUserWithActionException()
+    {
+        $response = $this->call('GET', route('api.v0.users.book', 'action'), [], [], [], $this->getFauthHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 500,
+                'description' => [translate('exception.action')]
+            ]
+        ])->assertStatus(500);
     }
 }
