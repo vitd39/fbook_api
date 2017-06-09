@@ -25,7 +25,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
 
     Route::get('books/condition-sort', 'BookController@loadConditionSort');
     Route::resource('books', 'BookController', [
-        'except' => ['store', 'update']
+        'except' => ['store', 'update', 'destroy']
     ]);
     Route::post('books/filters', ['as' => 'books.filters', 'uses' => 'BookController@filter']);
     Route::post('search', ['as' => 'search', 'uses' => 'BookController@search']);
@@ -42,7 +42,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('books/review/{book_id}', ['as' => 'books.review', 'uses' => 'BookController@review']);
         Route::post('books/booking/{book_id}', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
         Route::resource('books', 'BookController', [
-            'only' => ['store', 'update']
+            'only' => ['store', 'update', 'destroy']
         ]);
     });
 });

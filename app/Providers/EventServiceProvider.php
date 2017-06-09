@@ -28,5 +28,6 @@ class EventServiceProvider extends ServiceProvider
         parent::boot();
 
         Event::listen('books.averageStar', 'App\Events\AverageStarBookHandler');
+        Event::listen('book.deleted', 'App\Events\DeleteBookHandler');
     }
 }

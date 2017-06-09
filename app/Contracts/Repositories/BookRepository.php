@@ -24,4 +24,6 @@ interface BookRepository extends AbstractRepository
     public function store(array $attributes, MediaRepository $mediaRepository);
 
     public function update(array $attributes, Book $book, MediaRepository $mediaRepository);
+
+    public function destroy(Book $book);
 }

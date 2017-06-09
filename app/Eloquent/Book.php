@@ -2,6 +2,8 @@
 
 namespace App\Eloquent;
 
+use Illuminate\Support\Facades\Event;
+
 class Book extends AbstractEloquent
 {
     const STATUS = [
@@ -108,5 +110,14 @@ class Book extends AbstractEloquent
     public function getAvgStarAttribute($value)
     {
         return round($value, config('settings.round_average_star'));
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleted(function ($book) {
+            Event::fire('book.deleted', $book);
+        });
     }
 }

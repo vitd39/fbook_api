@@ -372,4 +372,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         
         return $book->load('category', 'office', 'media');
     }
+
+    public function destroy(Book $book)
+    {
+        $book->delete();
+    }
 }

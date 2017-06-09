@@ -659,4 +659,41 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(401);
     }
+
+    /* TEST STORE BOOKS */
+
+    public function testDeleteBookWithInvalidBookId()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('DELETE', route('api.v0.books.destroy', 'xxx'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
+
+    public function testDeleteBookWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $bookId = factory(Book::class)->create()->id;
+
+        $response = $this->call('DELETE', route('api.v0.books.destroy', $bookId), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
 }
