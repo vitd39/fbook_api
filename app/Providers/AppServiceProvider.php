@@ -33,14 +33,12 @@ class AppServiceProvider extends ServiceProvider
             $this->app->register(\Barryvdh\Debugbar\ServiceProvider::class);
         }
 
-        $this->app->singleton('glide', function ($app) {
-            $fileSystem = $app->make('Illuminate\Contracts\Filesystem\Filesystem');
-
-            $server = ServerFactory::create([
-                'source' => $fileSystem->getDriver(),
-                'cache' => $fileSystem->getDriver(),
-                'cache_path_prefix' => '.cache',
-                'base_url' => 'image',
+        $this->app->singleton('glide', function () {
+            return ServerFactory::create([
+                'source' => \Storage::disk('image')->getDriver(),
+                'cache' => \Storage::disk('image')->getDriver(),
+                'cache_path_prefix' => 'cache',
+                'base_url' => null,
                 'max_image_size' => 2000 * 2000,
                 'presets' => [
                     'thumbnail' => [
@@ -66,8 +64,6 @@ class AppServiceProvider extends ServiceProvider
                 ],
                 'response' => new LaravelResponseFactory(),
             ]);
-
-            return $server;
         });
 
         $this->app->singleton('glide.builder', function () {
