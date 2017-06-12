@@ -34,6 +34,8 @@ class Book extends AbstractEloquent
 
     protected $hidden = ['owner_id', 'category_id', 'office_id'];
 
+    protected $appends = ['overview'];
+
     public function owner()
     {
         return $this->belongsTo(User::class);
@@ -119,5 +121,10 @@ class Book extends AbstractEloquent
         static::deleted(function ($book) {
             Event::fire('book.deleted', $book);
         });
+    }
+
+    public function getOverviewAttribute()
+    {
+        return str_limit($this->description, config('paginate.overview_limit'));
     }
 }

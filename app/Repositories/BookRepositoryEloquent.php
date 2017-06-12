@@ -303,10 +303,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     /**
      * Upload and save medias when user add new book
      *
-     * @param  array $medias
-     * @param  App\Eloquent\Book $book
-     * @param  App\Contracts\Repositories\MediaRepository mediaRepository
-     * @return void
+     * @param array $medias
+     * @param Book $book
+     * @param MediaRepository $mediaRepository
      */
     protected function uploadAndSaveMediasForBook(array $medias, Book $book, MediaRepository $mediaRepository)
     {
@@ -329,8 +328,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     /**
      * Get book info by code
      *
-     * @param  string $code
-     * @return App\Eloquent\Book or null
+     * @param string $code
+     * @return mixed
      */
     protected function getBookByCode(string $code)
     {
@@ -373,8 +372,14 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $book->load('category', 'office', 'media');
     }
 
+
     public function destroy(Book $book)
     {
         $book->delete();
+    }
+
+    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = [])
+    {
+        return $this->select($dataSelect)->with($with)->where('category_id', $categoryId)->paginate(config('paginate.default'));
     }
 }
