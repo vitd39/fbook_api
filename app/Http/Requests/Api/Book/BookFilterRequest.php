@@ -27,7 +27,7 @@ class BookFilterRequest extends AbstractRequest
             'field' => 'required|in:' . implode(',', array_keys(config('model.filter_books'))),
             'filters' => 'array',
             'filters.*' => 'array',
-            'sort.field' => 'in:' . implode(',', array_values(config('model.sort_field'))),
+            'sort.field' => 'in:' . implode(',', array_pluck(config('model.condition_sort_book'), 'field')),
             'sort.order_by' => 'in:' . implode(',', config('model.sort_type')),
         ];
     }

@@ -23,7 +23,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('logout', ['as' => 'logout', 'uses' => 'LoginController@logout']);
     });
 
-    Route::get('books/condition-sort', 'BookController@loadConditionSort');
+    Route::get('books/sort-by', 'BookController@sortBy');
     Route::resource('books', 'BookController', [
         'except' => ['store', 'update', 'destroy']
     ]);

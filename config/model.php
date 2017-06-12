@@ -48,13 +48,16 @@ return [
             'title' => translate('title_key.latest')
         ]
     ],
+    'condition_sort_book' => [
+        ['text' => 'Title', 'field' => 'title'],
+        ['text' => 'View', 'field' => 'count_view'],
+        ['text' => 'Star', 'field' => 'avg_star'],
+        ['text' => 'Publish date', 'field' => 'publish_date'],
+        ['text' => 'Author', 'field' => 'author'],
+        ['text' => 'Created at', 'field' => 'created_at'],
+    ],
     'filter_type' => [
         'category', 'office'
-    ],
-    'sort_field' => [
-        'rating' => 'avg_star',
-        'latest' => 'created_at',
-        'view' => 'count_view',
     ],
     'sort_type' => [
         'desc', 'asc'
@@ -63,5 +66,10 @@ return [
         'image' => 0,
         'video' => 1,
     ],
-    'user_sharing_book' => 'sharing'
+    'user_sharing_book' => 'sharing',
+    'media' => [
+        'type' => [
+            'image_book' => 1
+        ],
+    ],
 ];

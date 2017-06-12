@@ -6,12 +6,6 @@ use Illuminate\Support\Facades\Event;
 
 class Book extends AbstractEloquent
 {
-    const STATUS = [
-        'waiting' => 1,
-        'reading' => 2,
-        'done' => 3,
-    ];
-
     /**
      * The attributes that are mass assignable.
      *
@@ -58,12 +52,12 @@ class Book extends AbstractEloquent
 
     public function userReadingBook()
     {
-        return $this->belongsToMany(User::class)->wherePivot('status', self::STATUS['reading']);
+        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.reading'));
     }
 
     public function usersWaitingBook()
     {
-        return $this->belongsToMany(User::class)->wherePivot('status', self::STATUS['waiting']);
+        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.waiting'));
     }
 
     public function reviews()
@@ -83,7 +77,7 @@ class Book extends AbstractEloquent
 
     public function image()
     {
-        return $this->morphOne(Media::class, 'target')->where('type', Media::TYPE_IMAGE_BOOK);
+        return $this->morphOne(Media::class, 'target')->where('type', config('model.media.type.image_book'));
     }
 
     public function scopeGetData($query, $field, $filters = [], $orderBy = 'DESC')

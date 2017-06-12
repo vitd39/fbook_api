@@ -27,7 +27,7 @@ class SearchRequest extends AbstractRequest
             'search.field' => 'in:' . implode(',', config('model.book.fields')),
             'conditions' => 'array',
             'conditions.*' => 'array',
-            'sort.field' => 'in:' . implode(',', array_values(config('model.sort_field'))),
+            'sort.field' => 'in:' . implode(',', array_pluck(config('model.condition_sort_book'), 'field')),
             'sort.order_by' => 'in:' . implode(',', config('model.sort_type')),
         ];
 

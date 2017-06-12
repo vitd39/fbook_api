@@ -156,7 +156,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         $numberOfUserWaitingBook = \DB::table('books')
             ->join('book_user', 'books.id', '=', 'book_user.book_id')
             ->select('book_user.book_id', \DB::raw('count(book_user.user_id) as count_waiting'))
-            ->where('book_user.status', Book::STATUS['waiting'])
+            ->where('book_user.status', config('model.book_user.status.waiting'))
             ->groupBy('book_user.book_id')
             ->orderBy('count_waiting', 'DESC')
             ->limit($limit ?: config('paginate.default'))

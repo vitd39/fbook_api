@@ -131,9 +131,9 @@ class BookController extends ApiController
         });
     }
 
-    public function loadConditionSort()
+    public function sortBy()
     {
-        $this->compacts['items'] = array_values(config('model.filter_books'));
+        $this->compacts['items'] = config('model.condition_sort_book');
 
         return $this->jsonRender();
     }
