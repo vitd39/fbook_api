@@ -6,9 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Media extends Model
 {
-    const TYPE_IMAGE_BOOK = 1;
-
-
     /**
      * The attributes that are mass assignable.
      *
