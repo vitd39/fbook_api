@@ -26,4 +26,6 @@ interface BookRepository extends AbstractRepository
     public function update(array $attributes, Book $book, MediaRepository $mediaRepository);
 
     public function destroy(Book $book);
+
+    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = []);
 }

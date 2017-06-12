@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\BookRepository;
+use App\Contracts\Repositories\CategoryRepository;
+use App\Exceptions\Api\NotFoundException;
 use App\Http\Requests\Api\Book\BookFilterRequest;
 use App\Http\Requests\Api\Book\SearchRequest;
 use App\Exceptions\Api\ActionException;
@@ -167,6 +169,33 @@ class BookController extends ApiController
             $data = $this->repository->getBooksByFields($relations, $this->select, $field, $input);
 
             $this->compacts['item'] = $this->reFormatPaginate($data);
+        });
+    }
+
+    public function category($categoryId, CategoryRepository $categoryRepository)
+    {
+        $countCategoryById = $categoryRepository->find($categoryId);
+
+        if (!$countCategoryById) {
+            throw new NotFoundException;
+        }
+
+        $relations = [
+            'image' => function ($q) {
+                $q->select($this->imageSelect);
+            },
+            'category' => function ($q) {
+                $q->select($this->categorySelect);
+            },
+            'office' => function ($q) {
+                $q->select($this->officeSelect);
+            }
+        ];
+
+        return $this->getData(function () use ($relations, $categoryId) {
+            $this->compacts['items'] = $this->reFormatPaginate(
+                $this->repository->getBookByCategory($categoryId, $this->select, $relations)
+            );
         });
     }
 }

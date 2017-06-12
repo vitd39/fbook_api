@@ -685,6 +685,7 @@ class BookTest extends TestCase
         $bookId = factory(Book::class)->create()->id;
 
         $response = $this->call('DELETE', route('api.v0.books.destroy', $bookId), [], [], [], $headers);
+
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'
@@ -695,5 +696,45 @@ class BookTest extends TestCase
                 'code' => 401,
             ]
         ])->assertStatus(401);
+    }
+
+    /* TEST GET BOOK BY CATEGORY */
+
+    public function testGetBooksByCategorySuccess()
+    {
+        $categoryId = factory(Category::class)->create()->id;
+        $response = $this->call('GET', route('api.v0.books.category', $categoryId), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'items' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksByCategoryWithIdInvalid()
+    {
+        $response = $this->call('GET', route('api.v0.books.category', 0), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+                'description' => [translate('exception.not_found')]
+            ]
+        ])->assertStatus(404);
+
     }
 }
