@@ -92,7 +92,18 @@ class BookController extends ApiController
         return $this->doAction(function () use ($data, $id, $mediaRepository) {
             $book = $this->repository->findOrFail($id);
             $this->before('update', $book);
+
             $this->compacts['item'] = $this->repository->update($data, $book, $mediaRepository);
+        }, __FUNCTION__);
+    }
+
+    public function destroy($id)
+    {
+        return $this->doAction(function () use ($id) {
+            $book = $this->repository->findOrFail($id);
+            $this->before('delete', $book);
+
+            $this->repository->destroy($book);
         }, __FUNCTION__);
     }
 
