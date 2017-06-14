@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Contracts\Services\GlideInterface;
 use League\Glide\Signatures\SignatureException;
 use League\Glide\Signatures\SignatureFactory;
+use League\Glide\ServerFactory;
+use League\Glide\Responses\LaravelResponseFactory;
 
 class GlideService implements GlideInterface
 {
@@ -15,24 +17,26 @@ class GlideService implements GlideInterface
             SignatureFactory::create(env('GLIDE_SIGNATURE_KEY'))->validateRequest($path, $params);
 
             if (!$server->sourceFileExists($path) && isset($params['p'])) {
-                if ($params['p'] === 'thumbnail') {
-                    return response()->file(public_path('images/book_thumb_default.jpg'));
-                }
-
-                return response()->file(public_path('images/default_book.jpg'));
+                return $this->getImageDefault($params);
             }
 
             return $server->getImageResponse($path, $params);
         } catch (SignatureException $e) {
             \Log::error($e);
 
-            if (isset($params['p'])) {
-                if ($params['p'] === 'thumbnail') {
-                    return response()->file(public_path('images/book_thumb_default.jpg'));
-                }
-            }
-
-            return response()->file(public_path('images/default_book.jpg'));
+            return $this->getImageDefault($params);
         }
+    }
+
+    protected function getImageDefault($params)
+    {
+        $server = ServerFactory::create([
+            'source' => public_path(),
+            'cache' => storage_path('files/images'),
+            'presets' => config('settings.image_size'),
+            'response' => new LaravelResponseFactory(),
+        ]);
+
+        return $server->getImageResponse(config('settings.book_image_path_default'), $params);
     }
 }

@@ -40,28 +40,7 @@ class AppServiceProvider extends ServiceProvider
                 'cache_path_prefix' => 'cache',
                 'base_url' => null,
                 'max_image_size' => 2000 * 2000,
-                'presets' => [
-                    'thumbnail' => [
-                        'w' => 100,
-                        'h' => 100,
-                        'fit' => 'crop',
-                    ],
-                    'small' => [
-                        'w' => 320,
-                        'h' => 240,
-                        'fit' => 'crop',
-                    ],
-                    'medium' => [
-                        'w' => 640,
-                        'h' => 480,
-                        'fit' => 'crop',
-                    ],
-                    'large' => [
-                        'w' => 800,
-                        'h' => 600,
-                        'fit' => 'crop',
-                    ],
-                ],
+                'presets' => config('settings.image_size'),
                 'response' => new LaravelResponseFactory(),
             ]);
         });
