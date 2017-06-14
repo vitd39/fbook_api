@@ -271,7 +271,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         try {
             $book = $this->model()->findOrFail($id);
             
-            return $book->load(['image', 'reviewsDetailBook',
+            return $book->load(['media', 'reviewsDetailBook',
                 'userReadingBook' => function ($query) {
                     $query->select('id', 'name', 'avatar');
                 },
