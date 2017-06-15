@@ -30,9 +30,9 @@ class UpdateRequest extends AbstractRequest
             'code' => 'required|max:100',
             'category_id' => 'required|numeric|exists:categories,id',
             'office_id' => 'required|numeric|exists:offices,id',
-            'medias' => 'array|max:5',
-            'medias.*' => 'array|max:1',
-            'medias.*.file' => 'image|mimes:jpeg,jpg,gif,bmp,png|max:10240',
+            'medias' => 'required|array|max:3',
+            'medias.*' => 'required|array|max:1',
+            'medias.*.file' => 'required|image|mimes:jpeg,jpg,gif,bmp,png|max:10240',
         ];
     }
 }

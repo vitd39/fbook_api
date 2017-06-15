@@ -21,7 +21,7 @@ class Media extends Model
         'target_id',
     ];
 
-    protected $hidden = ['target_id', 'target_type', 'thumb_path'];
+    protected $hidden = ['target_id', 'target_type', 'thumb_path', 'created_at', 'updated_at'];
 
     protected $appends = ['mobile', 'web'];
 
@@ -75,5 +75,10 @@ class Media extends Model
         }
 
         return $this->thumb_path;
+    }
+
+    public function getTypeAttribute($value)
+    {
+        return array_flip(config('model.media_type'))[$value];
     }
 }

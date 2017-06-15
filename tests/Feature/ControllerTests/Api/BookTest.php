@@ -8,6 +8,7 @@ use App\Eloquent\Book;
 use Faker\Factory;
 use App\Eloquent\Category;
 use App\Eloquent\Office;
+use Illuminate\Http\UploadedFile;
 
 class BookTest extends TestCase
 {
@@ -547,6 +548,7 @@ class BookTest extends TestCase
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
+        $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -584,6 +586,7 @@ class BookTest extends TestCase
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
+        $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -607,6 +610,7 @@ class BookTest extends TestCase
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
+        $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
 
         $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -646,6 +650,7 @@ class BookTest extends TestCase
         $dataBook = factory(Book::class)->make()->toArray();
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
+        $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
 
         $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
