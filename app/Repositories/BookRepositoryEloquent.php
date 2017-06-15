@@ -273,10 +273,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             
             return $book->load(['media', 'reviewsDetailBook',
                 'userReadingBook' => function ($query) {
-                    $query->select('id', 'name', 'avatar');
+                    $query->select('id', 'name', 'avatar', 'position');
                 },
                 'usersWaitingBook' => function($query) {
-                    $query->select('id', 'name', 'avatar');
+                    $query->select('id', 'name', 'avatar', 'position');
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
                 'category' => function($query) {
@@ -293,7 +293,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             Log::error($e->getMessage());
 
             throw new NotFoundException();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error($e->getMessage());
 
             throw new UnknownException($e->getMessage(), $e->getCode());
