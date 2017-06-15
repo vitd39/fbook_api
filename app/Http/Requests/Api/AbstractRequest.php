@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Factory as ValidationFactory;
 
 abstract class AbstractRequest extends FormRequest
 {
@@ -16,6 +17,17 @@ abstract class AbstractRequest extends FormRequest
                 'description' => $validator->errors()->all(),
             ]
         ];
+    }
+
+    public function __construct(ValidationFactory $validationFactory)
+    {
+        $validationFactory->extend(
+            'unique_book_image', function ($attribute, $value, $parameters) {
+                return count(array_where(array_pluck($value, $parameters), function ($value) {
+                    return $value == config('model.media.type.image_book');
+                })) == 1;
+            }, __('validation.custom.unique_book_image')
+        );
     }
 
     public function all()

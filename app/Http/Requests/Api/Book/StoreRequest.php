@@ -30,9 +30,10 @@ class StoreRequest extends AbstractRequest
             'code' => 'required|max:100|unique:books,code',
             'category_id' => 'required|numeric|exists:categories,id',
             'office_id' => 'required|numeric|exists:offices,id',
-            'medias' => 'required|array|max:3',
-            'medias.*' => 'required|array|max:1',
+            'medias' => 'required|array|max:3|unique_book_image:type',
+            'medias.*' => 'required|array|max:2',
             'medias.*.file' => 'required|image|mimes:jpeg,jpg,gif,bmp,png|max:10240',
+            'medias.*.type' => 'required|numeric|between:0,1',
         ];
     }
 }
