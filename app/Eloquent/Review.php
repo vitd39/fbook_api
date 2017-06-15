@@ -13,7 +13,7 @@ class Review extends Model
         'star'
     ];
 
-    protected $hidden = ['user_id', 'book_id', 'created_at', 'updated_at'];
+    protected $hidden = ['user_id', 'book_id', 'updated_at'];
 
     public function user()
     {

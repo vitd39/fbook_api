@@ -39,8 +39,8 @@ return [
             'fit' => 'crop',
         ],
         'medium_web' => [
-            'w' => 640,
-            'h' => 480,
+            'w' => 275,
+            'h' => 410,
             'fit' => 'crop',
         ],
         'large_web' => [
