@@ -740,6 +740,5 @@ class BookTest extends TestCase
                 'description' => [translate('exception.not_found')]
             ]
         ])->assertStatus(404);
-
     }
 }

@@ -67,10 +67,17 @@ class UserController extends ApiController
             throw new ActionException;
         }
 
-        return $this->getData(function () use ($action) {
+        return $this->getData(function() use ($action) {
             $data = $this->repository->getDataBookByCurrentUser($action, $this->bookSelect, $this->relations);
 
             $this->compacts['items'] = $this->reFormatPaginate($data);
+        });
+    }
+
+    public function getUserFromToken()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['item'] = $this->user;
         });
     }
 }

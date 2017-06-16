@@ -68,4 +68,40 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(500);
     }
+
+    /* TEST GET USER PROFILE */
+
+    public function testGetUserProfileSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.profile'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetUserProfileWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.profile'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
 }

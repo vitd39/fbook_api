@@ -20,7 +20,8 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             $currentUser = $this->model()->create([
                 'name' => $userFromAuthServer['name'],
                 'email' => $userFromAuthServer['email'],
-            ]);
+                'avatar' => $userFromAuthServer['avatar'],
+            ])->fresh();
         }
 
         return $currentUser;
