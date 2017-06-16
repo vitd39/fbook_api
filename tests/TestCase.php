@@ -32,7 +32,7 @@ abstract class TestCase extends BaseTestCase
     {
         $response = $this->call('POST',
             route('api.v0.login'),
-            ['refresh_token' => env('REFRESH_TOKEN_TEST')],
+            ['email' => env('AUTH_EMAIL_TEST'), 'password' => env('AUTH_PASSWORD_TEST')],
             [],
             [],
             $this->getHeaders()
