@@ -549,6 +549,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -587,6 +588,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -611,6 +613,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
 
         $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
         $response->assertJsonStructure([

@@ -24,7 +24,7 @@ class MediaRepositoryEloquent extends AbstractRepositoryEloquent implements Medi
                     'name' => $file['file']->getClientOriginalName(),
                     'size' => $file['file']->getSize(),
                     'type' => $file['type'],
-                    'path' => $this->uploadFile($file['file'], $path, $file['type'] ? 'video' : 'image')
+                    'path' => $this->uploadFile($file['file'], $path, 'image')
                 ];
             }
 

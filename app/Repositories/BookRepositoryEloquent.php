@@ -312,10 +312,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         $dataMedias = [];
 
         foreach ($medias as $media) {
-            $dataMedias[] = [
-                'file' => $media['file'],
-                'type' => config('model.media_type.image'),
-            ];
+            $dataMedias[] = array_only($media, ['file', 'type']);
         }
 
         $mediaRepository->uploadAndSaveMedias(

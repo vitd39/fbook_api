@@ -103,6 +103,7 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'unique_book_image' => 'The media\'s must have at exactly 1 image represent for book.'
     ],
 
     /*
