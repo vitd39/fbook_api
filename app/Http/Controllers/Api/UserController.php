@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Exceptions\Api\ActionException;
+use App\Http\Requests\Api\User\AddTagsRequest;
 
 class UserController extends ApiController
 {
@@ -78,6 +79,15 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['item'] = $this->user;
+        });
+    }
+
+    public function addTags(AddTagsRequest $request)
+    {
+        $data = $request->item;
+
+        return $this->requestAction(function() use ($data) {
+            $this->repository->addTags($data['tags']);
         });
     }
 }

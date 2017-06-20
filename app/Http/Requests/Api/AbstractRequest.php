@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Factory as ValidationFactory;
+use App\Eloquent\Category;
 
 abstract class AbstractRequest extends FormRequest
 {
@@ -27,6 +28,14 @@ abstract class AbstractRequest extends FormRequest
                     return $value == config('model.media.type.image_book');
                 })) == 1;
             }, __('validation.custom.unique_book_image')
+        );
+
+        $validationFactory->extend(
+            'tags_formated', function ($attribute, $value, $parameters) {
+                $arrayTags = explode(',', $value);
+
+                return app(Category::class)->whereIn('id', $arrayTags)->count() == count($arrayTags);
+            }, __('validation.custom.tags_formated')
         );
     }
 

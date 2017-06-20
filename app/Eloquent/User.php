@@ -25,6 +25,7 @@ class User extends Authenticatable
         'position',
         'role',
         'office_id',
+        'tags',
     ];
 
     /**

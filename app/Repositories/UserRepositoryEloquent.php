@@ -51,4 +51,11 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 ->paginate(config('paginate.default'));
         }
     }
+
+    public function addTags(string $tags)
+    {
+        $this->user->update([
+            'tags' => $tags,
+        ]);
+    }
 }
