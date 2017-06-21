@@ -226,26 +226,23 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     public function review($bookId, array $data)
     {
         $book = $this->model()->findOrFail($bookId);
+        $dataReview = array_only($data, ['content', 'star']);
+        $dataReview['created_at'] = $dataReview['updated_at'] = Carbon::now();
 
-        if (!$book->reviews()->where('user_id', $this->user->id)->count()) {
-            $dataReview = array_only($data, ['content', 'star']);
-            $dataReview['created_at'] = $dataReview['updated_at'] = Carbon::now();
+        $book->reviews()->detach($this->user->id);
 
-            $book->reviews()->attach([
-                $this->user->id => $dataReview
+        $book->reviews()->attach([
+            $this->user->id => $dataReview
+        ]);
+
+        if (isset($dataReview['star'])) {
+            Event::fire('books.averageStar', [
+                [
+                    'book' => $book,
+                    'star' => $dataReview['star'],
+                ]
             ]);
-
-            if (isset($dataReview['star'])) {
-                Event::fire('books.averageStar', [
-                    [
-                        'book' => $book,
-                        'star' => $dataReview['star'],
-                    ]
-                ]);
-            }
-        } else {
-            throw new ActionException('not_allow_review');
-        } 
+        }
     }
 
     protected function getDataInput($attribute = [])
