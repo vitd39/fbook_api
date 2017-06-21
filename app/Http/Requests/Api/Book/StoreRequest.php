@@ -25,7 +25,7 @@ class StoreRequest extends AbstractRequest
     {
         return [
             'title' => 'required|max:255',
-            'author' => 'nullable|max:255',
+            'author' => 'required|max:255',
             'publish_date' => 'nullable|date_format:Y-m-d',
             'code' => 'required|max:100|unique:books,code',
             'category_id' => 'required|numeric|exists:categories,id',
