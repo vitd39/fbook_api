@@ -162,4 +162,40 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(422);
     }
+
+    /* TEST GET INTERESTED BOOKS BY CURRENT USER */
+
+    public function testGetInterestedBooksSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.interested.books'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetInterestedBooksWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.interested.books'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
 }

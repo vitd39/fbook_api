@@ -18,6 +18,9 @@ return [
             'status',
             'created_at'
         ],
+        'interested_books' => [
+            'books_per_page' => 6,
+        ],
     ],
     'book_user' => [
         'status' => [
