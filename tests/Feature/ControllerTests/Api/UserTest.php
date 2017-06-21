@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Faker\Factory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use App\Eloquent\Category;
 
 class UserTest extends TestCase
 {
@@ -103,5 +104,62 @@ class UserTest extends TestCase
                 'code' => 401,
             ]
         ])->assertStatus(401);
+    }
+
+    /* TEST ADD TAGS FOR USERS */
+
+    public function testAddTagsSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+        $categoryId = factory(Category::class)->create()->id;
+        $data['tags'] = $categoryId;
+
+        $response = $this->call('POST', route('api.v0.user.add.tags'), ['item' => $data], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testAddTagsWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $categoryId = factory(Category::class)->create()->id;
+        $data['tags'] = $categoryId;
+
+        $response = $this->call('POST', route('api.v0.user.add.tags'), ['item' => $data], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testAddTagsWithFieldsNull()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('POST', route('api.v0.user.add.tags'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
     }
 }
