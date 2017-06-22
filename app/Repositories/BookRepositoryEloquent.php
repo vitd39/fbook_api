@@ -272,11 +272,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     {
         try {
             $book = $this->model()->findOrFail($id);
-            
-            return $book->load(['media', 'reviewsDetailBook',
-                'userReadingBook' => function ($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
-                },
+            $book->user_reading_book = $book->userReadingBook()->select('id', 'name', 'avatar', 'position')->first();
+
+            return  $book->load(['media', 'reviewsDetailBook',
                 'usersWaitingBook' => function($query) {
                     $query->select('id', 'name', 'avatar', 'position');
                     $query->orderBy('book_user.created_at', 'ASC');
