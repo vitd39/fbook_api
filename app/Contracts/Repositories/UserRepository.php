@@ -8,5 +8,5 @@ interface UserRepository extends AbstractRepository
 
     public function getDataBookByCurrentUser($action, $select = ['*'], $with = []);
 
-    public function addTags(string $tags);
+    public function addTags(string $tags = null);
 }

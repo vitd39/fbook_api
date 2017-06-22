@@ -32,6 +32,10 @@ abstract class AbstractRequest extends FormRequest
 
         $validationFactory->extend(
             'tags_formated', function ($attribute, $value, $parameters) {
+                if (!$value) {
+                    return true;
+                }
+                
                 $arrayTags = explode(',', $value);
 
                 return app(Category::class)->whereIn('id', $arrayTags)->count() == count($arrayTags);

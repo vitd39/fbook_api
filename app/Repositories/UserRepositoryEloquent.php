@@ -52,7 +52,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         }
     }
 
-    public function addTags(string $tags)
+    public function addTags(string $tags = null)
     {
         $this->user->update([
             'tags' => $tags,
