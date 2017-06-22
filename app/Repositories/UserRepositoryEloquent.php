@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\UserRepository;
+use App\Eloquent\Book;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
@@ -57,5 +58,21 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         $this->user->update([
             'tags' => $tags,
         ]);
+    }
+
+    public function getInterestedBooks($dataSelect = ['*'], $with = [])
+    {
+        if ($this->user->tags) {
+            $tags = explode(',', $this->user->tags);
+
+            return app(Book::class)
+                ->getLatestBooks($dataSelect, $with)
+                ->whereIn('category_id', $tags)
+                ->paginate(config('model.book.interested_books.books_per_page'));
+        } else {
+            return app(Book::class)
+                ->getLatestBooks($dataSelect, $with)
+                ->paginate(config('model.book.interested_books.books_per_page'));
+        }
     }
 }

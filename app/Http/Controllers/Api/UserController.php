@@ -90,4 +90,13 @@ class UserController extends ApiController
             $this->repository->addTags($data['tags']);
         });
     }
+
+    public function getInterestedBooks()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['items'] = $this->reFormatPaginate(
+                $this->repository->getInterestedBooks($this->bookSelect, ['image'])
+            );
+        });
+    }
 }

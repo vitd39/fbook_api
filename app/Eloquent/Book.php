@@ -121,4 +121,9 @@ class Book extends AbstractEloquent
     {
         return str_limit($this->description, config('paginate.overview_limit'));
     }
+
+    public function scopeGetLatestBooks($query, $dataSelect, $with)
+    {
+       return $query->select($dataSelect)->with($with)->orderBy('created_at','desc');
+    }
 }
