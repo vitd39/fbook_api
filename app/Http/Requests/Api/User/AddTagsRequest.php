@@ -25,7 +25,7 @@ class AddTagsRequest extends AbstractRequest
     {
         return [
             'item' => 'required|array|max:1',
-            'item.tags' => 'required|tags_formated',
+            'item.tags' => 'tags_formated',
         ];
     }
 }
