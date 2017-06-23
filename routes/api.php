@@ -44,7 +44,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::resource('user', 'UserController');
         Route::get('users/book/{action}', ['as' => 'users.book', 'uses' => 'UserController@getBook']);
         Route::post('books/review/{book_id}', ['as' => 'books.review', 'uses' => 'BookController@review']);
-        Route::post('books/booking/{book_id}', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
+        Route::post('books/booking', ['as' => 'books.booking', 'uses' => 'BookController@booking']);
         Route::resource('books', 'BookController', [
             'only' => ['store', 'update', 'destroy']
         ]);

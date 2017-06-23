@@ -268,7 +268,7 @@ class BookTest extends TestCase
         $newUpdate['status'] = config('model.book_user.status.done');
         $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
 
-        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response = $this->call('POST', route('api.v0.books.booking'), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code',
@@ -291,7 +291,7 @@ class BookTest extends TestCase
         $newUpdate['status'] = config('model.book_user.status.done');
         $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
 
-        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response = $this->call('POST', route('api.v0.books.booking'), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code',
@@ -314,7 +314,7 @@ class BookTest extends TestCase
         $newUpdate['status'] = config('model.book_user.status.done');
         $newUpdate['user_id'] = $user->id;
 
-        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response = $this->call('POST', route('api.v0.books.booking'), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code',
@@ -336,7 +336,7 @@ class BookTest extends TestCase
         $newUpdate['status'] = config('model.book_user.status.done');
         $newUpdate['user_id'] = $user->id;
 
-        $response = $this->call('POST', route('api.v0.books.booking', 0), ['item' => $newUpdate], [], [], $headers);
+        $response = $this->call('POST', route('api.v0.books.booking'), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'
@@ -359,7 +359,7 @@ class BookTest extends TestCase
         $newUpdate['status'] = config('model.book_user.status.done');
         $newUpdate['user_id'] = $user ? $user->id : $this->createUser()->id;
 
-        $response = $this->call('POST', route('api.v0.books.booking', $book->id), ['item' => $newUpdate], [], [], $headers);
+        $response = $this->call('POST', route('api.v0.books.booking'), ['item' => $newUpdate], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'

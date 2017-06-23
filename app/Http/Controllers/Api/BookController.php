@@ -120,12 +120,12 @@ class BookController extends ApiController
         });
     }
 
-    public function booking(BookingRequest $request, $id)
+    public function booking(BookingRequest $request)
     {
         $data = $request->all();
 
-        return $this->doAction(function () use ($data, $id) {
-            $book = $this->repository->findOrfail($id);
+        return $this->doAction(function () use ($data) {
+            $book = $this->repository->findOrfail($data['item']['book_id']);
 
             $this->repository->booking($book, $data);
         });
