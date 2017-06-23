@@ -75,4 +75,5 @@ return [
             'image_book' => 1
         ],
     ],
+    'book_user_status_cancel' => 4
 ];

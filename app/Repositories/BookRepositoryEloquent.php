@@ -239,6 +239,11 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->update(['status' => config('model.book.status.available')]);
 
                     $book->users()->detach($this->user->id);
+                } elseif (
+                    $checkUser->pivot->status == config('model.book_user.status.waiting')
+                    && $attributes['item']['status'] == config('model.book_user_status_cancel')
+                ) {
+                    $book->users()->detach($this->user->id);
                 } else {
                     $book->users()->updateExistingPivot($this->user->id, [
                         'status' => config('model.book_user.status.waiting'),
