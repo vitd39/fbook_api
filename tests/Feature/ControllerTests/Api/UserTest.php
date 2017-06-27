@@ -198,4 +198,59 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(401);
     }
+
+    /* TEST SHOW PROFILE OTHERS USER */
+
+    public function testShowProfileOthersUserSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+        $userId = $this->createUser()->id;
+
+        $response = $this->call('GET', route('api.v0.users.show', $userId), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testShowProfileOthersUserWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $userId = $this->createUser()->id;
+
+        $response = $this->call('GET', route('api.v0.users.show', $userId), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testShowProfileOthersUserWithInvalidUserId()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.show', 'xxx'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
 }

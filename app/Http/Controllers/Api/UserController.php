@@ -59,6 +59,13 @@ class UserController extends ApiController
         ];
     }
 
+    public function show($id)
+    {
+        return $this->requestAction(function() use ($id) {
+            $this->compacts['item'] = $this->repository->show($id);
+        });
+    }
+
     public function getBook($action)
     {
         if (

@@ -11,4 +11,6 @@ interface UserRepository extends AbstractRepository
     public function addTags(string $tags = null);
 
     public function getInterestedBooks($dataSelect = ['*'], $with = []);
+
+    public function show($id);
 }
