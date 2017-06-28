@@ -715,7 +715,7 @@ class BookTest extends TestCase
 
         $response->assertJsonStructure([
             'items' => [
-                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'category'
             ],
             'message' => [
                 'status', 'code',
