@@ -22,7 +22,7 @@ class BookTest extends TestCase
                 ['office' => [4, 5]],
             ],
             'sort' => [
-                'key' => 'title',
+                'by' => 'title',
                 'order_by' => 'desc'
             ],
         ];

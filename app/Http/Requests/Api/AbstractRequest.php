@@ -52,8 +52,8 @@ abstract class AbstractRequest extends FormRequest
         }
 
         if (isset($input['sort'])) {
-            if (isset($input['sort']['field'])) {
-                $input['sort']['field'] = strtolower($input['sort']['field']);
+            if (isset($input['sort']['by'])) {
+                $input['sort']['by'] = strtolower($input['sort']['by']);
             }
 
             if (isset($input['sort']['order_by'])) {
