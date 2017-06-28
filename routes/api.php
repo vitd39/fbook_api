@@ -41,7 +41,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::get('user-profile', ['as' => 'user.profile', 'uses' => 'UserController@getUserFromToken']);
         Route::post('users/add-tags', ['as' => 'user.add.tags', 'uses' => 'UserController@addTags']);
         Route::get('users/interested-books', ['as' => 'user.interested.books', 'uses' => 'UserController@getInterestedBooks']);
-        Route::resource('user', 'UserController');
+        Route::resource('users', 'UserController');
         Route::get('users/book/{action}', ['as' => 'users.book', 'uses' => 'UserController@getBook']);
         Route::post('books/review/{book_id}', ['as' => 'books.review', 'uses' => 'BookController@review']);
         Route::post('books/booking', ['as' => 'books.booking', 'uses' => 'BookController@booking']);

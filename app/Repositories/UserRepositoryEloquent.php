@@ -16,7 +16,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     {
         $userInDatabase = $this->model()->whereEmail($userFromAuthServer['email'])->first();
         $currentUser = $userInDatabase;
-        
+
         if (!count($userInDatabase)) {
             $currentUser = $this->model()->create([
                 'name' => $userFromAuthServer['name'],
@@ -74,5 +74,10 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 ->getLatestBooks($dataSelect, $with)
                 ->paginate(config('model.book.interested_books.books_per_page'));
         }
+    }
+
+    public function show($id)
+    {
+        return $this->model()->findOrFail($id);
     }
 }
