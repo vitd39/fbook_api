@@ -714,7 +714,7 @@ class BookTest extends TestCase
         $response = $this->call('GET', route('api.v0.books.category', $categoryId), [], [], [], $this->getHeaders());
 
         $response->assertJsonStructure([
-            'items' => [
+            'item' => [
                 'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'category'
             ],
             'message' => [
@@ -762,7 +762,7 @@ class BookTest extends TestCase
         $response = $this->call('POST', route('api.v0.books.category.filter', $categoryId), $data, [], [], $this->getHeaders());
 
         $response->assertJsonStructure([
-            'items' => [
+            'item' => [
                 'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'category'
             ],
             'message' => [
