@@ -289,8 +289,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         ];
         $filters = [];
 
-        if (isset($attribute['sort']['field']) && $attribute['sort']['field']) {
-            $sort['field'] = $attribute['sort']['field'];
+        if (isset($attribute['sort']['by']) && $attribute['sort']['by']) {
+            $sort['field'] = $attribute['sort']['by'];
         }
 
         if (isset($attribute['sort']['order_by']) && $attribute['sort']['order_by']) {
