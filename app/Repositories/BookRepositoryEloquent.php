@@ -415,4 +415,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     {
         return $this->select($dataSelect)->with($with)->where('category_id', $categoryId)->paginate(config('paginate.default'));
     }
+
+    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = [])
+    {
+        $input = $this->getDataInput($attribute);
+
+        return $this->model()
+            ->select($dataSelect)
+            ->with($with)
+            ->where('category_id', $categoryId)
+            ->getData($input['sort']['field'], $input['filters'], $input['sort']['type'])
+            ->paginate(config('paginate.default'));
+    }
 }
