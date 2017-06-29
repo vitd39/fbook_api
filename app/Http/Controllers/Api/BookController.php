@@ -195,7 +195,7 @@ class BookController extends ApiController
             $bookCategory = $this->repository->getBookByCategory($category->id, $this->select, $relations);
             $currentPage = $bookCategory->currentPage();
 
-            $this->compacts['items'] = [
+            $this->compacts['item'] = [
                 'total' => $bookCategory->total(),
                 'per_page' => $bookCategory->perPage(),
                 'current_page' => $currentPage,
@@ -233,7 +233,7 @@ class BookController extends ApiController
             $bookCategory = $this->repository->getBookFilteredByCategory($category->id, $input, $this->select, $relations);
             $currentPage = $bookCategory->currentPage();
 
-            $this->compacts['items'] = [
+            $this->compacts['item'] = [
                 'total' => $bookCategory->total(),
                 'per_page' => $bookCategory->perPage(),
                 'current_page' => $currentPage,
