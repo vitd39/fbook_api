@@ -29,6 +29,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
     ]);
     Route::post('books/filters', ['as' => 'books.filters', 'uses' => 'BookController@filter']);
     Route::get('books/category/{category_id}', ['as' => 'books.category', 'uses' => 'BookController@category']);
+    Route::post('books/category/{category_id}/filter', ['as' => 'books.category.filter', 'uses' => 'BookController@filterCategory']);
     Route::post('search', ['as' => 'search', 'uses' => 'BookController@search']);
     Route::resource('categories', 'CategoryController', [
         'only' => ['index']

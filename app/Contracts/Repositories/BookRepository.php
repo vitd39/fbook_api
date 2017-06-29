@@ -28,4 +28,6 @@ interface BookRepository extends AbstractRepository
     public function destroy(Book $book);
 
     public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = []);
+
+    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = []);
 }

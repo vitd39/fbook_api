@@ -744,4 +744,52 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(404);
     }
+
+    /* TEST GET BOOK FILTERED BY CATEGORY */
+
+    public function testGetBooksFilteredByCategorySuccess()
+    {
+        $categoryId = factory(Category::class)->create()->id;
+        $data = [
+            'filters' => [
+                ['office' => [4, 5]],
+            ],
+            'sort' => [
+                'by' => 'count_view',
+                'order_by' => 'desc'
+            ],
+        ];
+        $response = $this->call('POST', route('api.v0.books.category.filter', $categoryId), $data, [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'items' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'category'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksFilteredByCategoryWithIdInvalid()
+    {
+        $response = $this->call('POST', route('api.v0.books.category.filter', 0), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+                'description' => [translate('exception.not_found')]
+            ]
+        ])->assertStatus(404);
+    }
 }

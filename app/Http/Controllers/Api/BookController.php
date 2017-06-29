@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Contracts\Repositories\BookRepository;
 use App\Contracts\Repositories\CategoryRepository;
 use App\Exceptions\Api\NotFoundException;
+use App\Http\Requests\Api\Book\BookFilteredByCategoryRequest;
 use App\Http\Requests\Api\Book\BookFilterRequest;
 use App\Http\Requests\Api\Book\FilterBookInCategoryRequest;
 use App\Http\Requests\Api\Book\SearchRequest;
@@ -192,6 +193,44 @@ class BookController extends ApiController
 
         return $this->getData(function () use ($relations, $category) {
             $bookCategory = $this->repository->getBookByCategory($category->id, $this->select, $relations);
+            $currentPage = $bookCategory->currentPage();
+
+            $this->compacts['items'] = [
+                'total' => $bookCategory->total(),
+                'per_page' => $bookCategory->perPage(),
+                'current_page' => $currentPage,
+                'next_page' => ($bookCategory->lastPage() > $currentPage) ? $currentPage + 1 : null,
+                'prev_page' => $currentPage - 1 ?: null,
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'data' => $bookCategory->items(),
+                ]
+            ];
+        });
+    }
+
+    public function filterCategory($categoryId, BookFilteredByCategoryRequest $request, CategoryRepository $categoryRepository)
+    {
+        $category = $categoryRepository->find($categoryId);
+
+        $input = $request->all();
+
+        if (!$category) {
+            throw new NotFoundException;
+        }
+
+        $relations = [
+            'image' => function ($q) {
+                $q->select($this->imageSelect);
+            },
+            'office' => function ($q) {
+                $q->select($this->officeSelect);
+            }
+        ];
+
+        return $this->getData(function () use ($relations, $category, $input) {
+            $bookCategory = $this->repository->getBookFilteredByCategory($category->id, $input, $this->select, $relations);
             $currentPage = $bookCategory->currentPage();
 
             $this->compacts['items'] = [
