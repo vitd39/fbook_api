@@ -17,7 +17,7 @@ class UserController extends ApiController
         'total_page',
         'avg_star',
         'count_view',
-        'status',
+        'books.status',
         'category_id',
         'office_id'
     ];

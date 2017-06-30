@@ -36,9 +36,8 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
         if ($action == config('model.user_sharing_book')) {
             return $this->user->owners()
-                ->select($select)
                 ->with($with)
-                ->paginate(config('paginate.default'));
+                ->paginate(config('paginate.default'), $select);
         }
     }
 
@@ -46,10 +45,9 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     {
         if (in_array($status, array_values(config('model.book_user.status')))) {
             return $this->user->books()
-                ->select($select)
                 ->with($with)
                 ->wherePivot('status', $status)
-                ->paginate(config('paginate.default'));
+                ->paginate(config('paginate.default'), $select);
         }
     }
 
