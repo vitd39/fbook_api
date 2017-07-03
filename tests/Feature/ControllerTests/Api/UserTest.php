@@ -11,16 +11,18 @@ class UserTest extends TestCase
 {
     use DatabaseTransactions;
 
-    /* TEST GET BOOKS OF CURRENT USER */
+    /* TEST GET BOOKS OF USER */
 
-    public function testGetDataBookByCurrentUserSuccess()
+    public function testGetDataBookOfUserSuccess()
     {
         $faker = Factory::create();
+        $userId = $this->createUser()->id;
+
         $action = $faker->randomElement(array_merge(
             [config('model.user_sharing_book')], array_keys(config('model.book_user.status'))
         ));
 
-        $response = $this->call('GET', route('api.v0.users.book', $action), [], [], [], $this->getFauthHeaders());
+        $response = $this->call('GET', route('api.v0.users.book', ['id' => $userId, 'action' => $action]), [], [], [], $this->getFauthHeaders());
 
         $response->assertJsonStructure([
             'items' => [
@@ -37,10 +39,12 @@ class UserTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testGetDataBookByCurrentUserWithGuest()
+    public function testGetDataBookOfUserWithGuest()
     {
-        $response = $this->call('GET', route('api.v0.users.book', 'action'), [], [], [], $this->getHeaders());
+        $headers = $this->getHeaders();
+        $userId = $this->createUser()->id;
 
+        $response = $this->call('GET', route('api.v0.users.book', ['id' => $userId, 'action' => 'action']), [], [], [], $headers);
         $response->assertJsonStructure([
             'message' => [
                 'status', 'code', 'description'
@@ -53,9 +57,11 @@ class UserTest extends TestCase
         ])->assertStatus(401);
     }
 
-    public function testGetDataBookByCurrentUserWithActionException()
+    public function testGetDataBookOfUserWithActionException()
     {
-        $response = $this->call('GET', route('api.v0.users.book', 'action'), [], [], [], $this->getFauthHeaders());
+        $userId = $this->createUser()->id;
+
+        $response = $this->call('GET', route('api.v0.users.book', ['id' => $userId, 'action' => 'action']), [], [], [], $this->getFauthHeaders());
 
         $response->assertJsonStructure([
             'message' => [

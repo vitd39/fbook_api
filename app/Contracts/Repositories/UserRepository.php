@@ -6,7 +6,7 @@ interface UserRepository extends AbstractRepository
 {
     public function getCurrentUser($userFromAuthServer);
 
-    public function getDataBookByCurrentUser($action, $select = ['*'], $with = []);
+    public function getDataBookOfUser($id, $action, $select = ['*'], $with = []);
 
     public function addTags(string $tags = null);
 

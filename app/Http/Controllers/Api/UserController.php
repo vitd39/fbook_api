@@ -66,7 +66,7 @@ class UserController extends ApiController
         });
     }
 
-    public function getBook($action)
+    public function getBook($id, $action)
     {
         if (
             !in_array($action, array_keys(config('model.book_user.status')))
@@ -75,8 +75,8 @@ class UserController extends ApiController
             throw new ActionException;
         }
 
-        return $this->getData(function() use ($action) {
-            $data = $this->repository->getDataBookByCurrentUser($action, $this->bookSelect, $this->relations);
+        return $this->getData(function() use ($id, $action) {
+            $data = $this->repository->getDataBookOfUser($id, $action, $this->bookSelect, $this->relations);
 
             $this->compacts['items'] = $this->reFormatPaginate($data);
         });
