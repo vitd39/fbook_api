@@ -50,6 +50,11 @@ class Book extends AbstractEloquent
         return $this->belongsToMany(User::class)->withPivot('status', 'type');
     }
 
+    public function owners()
+    {
+        return $this->belongsToMany(User::class, 'owners');
+    }
+
     public function userReadingBook()
     {
         return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.reading'));
