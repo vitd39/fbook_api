@@ -50,6 +50,11 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 'title' => config('model.filter_books.waiting.title'),
                 'data' => $this->getBooksByWaiting($with, $dataSelect, $limit)->items(),
             ],
+            [
+                'key' => config('model.filter_books.read.key'),
+                'title' => config('model.filter_books.read.title'),
+                'data' => $this->getBooksByRead($with, $dataSelect, $limit)->items(),
+            ],
         ];
     }
 
@@ -77,6 +82,11 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 'key' => config('model.filter_books.waiting.key'),
                 'title' => config('model.filter_books.waiting.title'),
                 'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, $attribute)->items(),
+            ],
+            [
+                'key' => config('model.filter_books.read.key'),
+                'title' => config('model.filter_books.read.title'),
+                'data' => $this->getBooksByRead($with, $dataSelect, $limit, $attribute)->items(),
             ],
         ];
     }
@@ -150,14 +160,14 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByBookUserStatus($status, $with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
         $input = $this->getDataInput($attribute);
 
         $numberOfUserWaitingBook = \DB::table('books')
             ->join('book_user', 'books.id', '=', 'book_user.book_id')
             ->select('book_user.book_id', \DB::raw('count(book_user.user_id) as count_waiting'))
-            ->where('book_user.status', config('model.book_user.status.waiting'))
+            ->where('book_user.status', $status)
             ->groupBy('book_user.book_id')
             ->orderBy('count_waiting', 'DESC')
             ->limit($limit ?: config('paginate.default'))
@@ -177,6 +187,20 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $books;
     }
 
+    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    {
+        return $this->getBooksByBookUserStatus(
+            config('model.book_user.status.waiting'), $with, $dataSelect, $limit, $attribute
+        );
+    }
+
+    protected function getBooksByRead($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    {
+        return $this->getBooksByBookUserStatus(
+            config('model.book_user.status.done'), $with, $dataSelect, $limit, $attribute
+        );
+    }
+
     public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = [])
     {
         switch ($field) {
@@ -191,6 +215,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
 
             case config('model.filter_books.waiting.key'):
                 return $this->getBooksByWaiting($with, $dataSelect, '', $attribute);
+
+            case config('model.filter_books.read.key'):
+                return $this->getBooksByRead($with, $dataSelect, '', $attribute);
         }
     }
 

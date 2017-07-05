@@ -49,6 +49,11 @@ return [
             'key' => 'latest',
             'field' => 'created_at',
             'title' => translate('title_key.latest')
+        ],
+        'read' => [
+            'key' => 'read',
+            'field' => '',
+            'title' => translate('title_key.read')
         ]
     ],
     'condition_sort_book' => [

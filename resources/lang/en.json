@@ -38,6 +38,7 @@
     "latest" : "The latest books",
     "view" : "The most view books",
     "rating" : "The rating books",
-    "waiting" : "The waiting books"
+    "waiting" : "The waiting books",
+    "read" : "The most read books"
   }
 }

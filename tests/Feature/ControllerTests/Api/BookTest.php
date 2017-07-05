@@ -87,6 +87,25 @@ class BookTest extends TestCase
         ])->assertStatus(200);
     }
 
+    public function testGetBooksByReadSuccess()
+    {
+        $response = $this->call('GET', route('api.v0.books.index', ['field' => 'read']), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'item' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'data'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
     public function testGetBooksInvalid()
     {
         $response = $this->call('GET', route('api.v0.books.index', ['field' => 'viewa']), [], [], [], $this->getHeaders());
