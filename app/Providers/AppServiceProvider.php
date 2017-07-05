@@ -58,5 +58,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Contracts\Services\GlideInterface::class,
             \App\Services\GlideService::class
         );
+
+        $this->app->bind(
+            \App\Contracts\Services\GoogleBookInterface::class,
+            \App\Services\GoogleBook::class
+        );
     }
 }

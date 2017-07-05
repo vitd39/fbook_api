@@ -38,6 +38,8 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         'only' => ['index']
     ]);
 
+    Route::get('search-books', 'SearchController@search');
+
     Route::group(['middleware' => 'fapi'], function () {
         Route::get('user-profile', ['as' => 'user.profile', 'uses' => 'UserController@getUserFromToken']);
         Route::post('users/add-tags', ['as' => 'user.add.tags', 'uses' => 'UserController@addTags']);
