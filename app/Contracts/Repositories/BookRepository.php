@@ -4,6 +4,7 @@ namespace App\Contracts\Repositories;
 
 use App\Eloquent\Book;
 use App\Contracts\Repositories\MediaRepository;
+use App\Contracts\Services\CounterInterface;
 
 interface BookRepository extends AbstractRepository
 {
@@ -19,7 +20,7 @@ interface BookRepository extends AbstractRepository
 
     public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = []);
 
-    public function show($id);
+    public function show($id, CounterInterface $counter);
 
     public function store(array $attributes, MediaRepository $mediaRepository);
 
