@@ -315,6 +315,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $query->select('id', 'name', 'avatar', 'position');
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
+                'usersReadBook' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->orderBy('book_user.created_at', 'DESC');
+                },
                 'category' => function($query) {
                     $query->select('id', 'name');
                 },
