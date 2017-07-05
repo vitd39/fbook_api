@@ -14,6 +14,7 @@ use Log;
 use App\Contracts\Repositories\MediaRepository;
 use App\Exceptions\Api\ActionException;
 use App\Traits\Repositories\UploadableTrait;
+use App\Contracts\Services\CounterInterface;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -304,10 +305,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return compact('sort', 'filters');
     }
 
-    public function show($id)
+    public function show($id, CounterInterface $counter)
     {
         try {
             $book = $this->model()->findOrFail($id);
+            $book->update([
+                'count_view' => $counter->showAndCount('detail-book', $id),
+            ]);
             $book->user_reading_book = $book->userReadingBook()->select('id', 'name', 'avatar', 'position')->first();
 
             return  $book->load(['media', 'reviewsDetailBook',
@@ -382,7 +386,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         if (isset($attributes['medias'])) {
             $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
         }
-        
+
         return $book->load('category', 'office', 'media');
     }
 
@@ -405,7 +409,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             $book->media()->delete();
             $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
         }
-        
+
         return $book->load('category', 'office', 'media');
     }
 

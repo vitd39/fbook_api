@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\Services\GoogleBookInterface;
 use App\Http\Requests\Api\Search\GoogleBookRequest;
+use App\Contracts\Services\CounterInterface;
 
 class SearchController extends ApiController
 {
