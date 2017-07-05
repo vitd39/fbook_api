@@ -60,6 +60,11 @@ class Book extends AbstractEloquent
         return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.waiting'));
     }
 
+    public function usersReadBook()
+    {
+        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.done'));
+    }
+
     public function reviews()
     {
         return $this->belongsToMany(User::class, 'reviews')->withPivot('content', 'star');
