@@ -340,6 +340,11 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
     }
 
+    public function increaseView(Book $book)
+    {
+        $book->increment('count_view');
+    }
+
     /**
      * Upload and save medias when user add new book
      *
