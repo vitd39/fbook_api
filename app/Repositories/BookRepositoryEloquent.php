@@ -330,7 +330,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $query->select('id', 'name');
                 },
                 'owner' => function($query) {
-                    $query->select('id', 'name');
+                    $query->select('id', 'name', 'avatar', 'position');
                 },
             ]);
         } catch (ModelNotFoundException $e) {
