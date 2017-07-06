@@ -63,10 +63,5 @@ class AppServiceProvider extends ServiceProvider
             \App\Contracts\Services\GoogleBookInterface::class,
             \App\Services\GoogleBook::class
         );
-
-        $this->app->bind(
-            \App\Contracts\Services\CounterInterface::class,
-            \App\Services\Counter::class
-        );
     }
 }
