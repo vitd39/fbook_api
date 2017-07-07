@@ -16,7 +16,6 @@ use App\Http\Requests\Api\Book\ReviewRequest;
 use App\Http\Requests\Api\Book\StoreRequest;
 use App\Contracts\Repositories\MediaRepository;
 use App\Http\Requests\Api\Book\UpdateRequest;
-use App\Contracts\Services\CounterInterface;
 
 class BookController extends ApiController
 {
@@ -54,11 +53,9 @@ class BookController extends ApiController
 
     protected $counter;
 
-    public function __construct(BookRepository $repository, CounterInterface $counter)
+    public function __construct(BookRepository $repository)
     {
         parent::__construct($repository);
-
-        $this->counter = $counter;
     }
 
     public function index(IndexRequest $request)
@@ -80,7 +77,7 @@ class BookController extends ApiController
 
     public function show($id)
     {
-        $this->compacts['item'] = $this->repository->show($id, $this->counter);
+        $this->compacts['item'] = $this->repository->show($id);
 
         return $this->jsonRender();
     }
