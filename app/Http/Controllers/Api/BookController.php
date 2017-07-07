@@ -103,6 +103,15 @@ class BookController extends ApiController
         }, __FUNCTION__);
     }
 
+    public function increaseView($id)
+    {
+        return $this->doAction(function () use ($id) {
+            $book = $this->repository->findOrFail($id);
+
+            $this->repository->increaseView($book);
+        }, __FUNCTION__);
+    }
+
     public function destroy($id)
     {
         return $this->doAction(function () use ($id) {

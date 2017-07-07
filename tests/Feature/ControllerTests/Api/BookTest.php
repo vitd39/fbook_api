@@ -154,6 +154,62 @@ class BookTest extends TestCase
         ])->assertStatus(200);
     }
 
+    /* TEST INCREASE VIEW OF BOOK */
+
+    public function testIncreaseViewBookWithBookInvalid()
+    {
+        $headers = $this->getHeaders();
+        $response = $this->call('GET', route('api.v0.books.increaseView', 'xxx'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
+
+    public function testIncreaseViewBookWithBookNotFound()
+    {
+        $headers = $this->getHeaders();
+        $response = $this->call('GET', route('api.v0.books.increaseView', 0), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
+
+    public function testIncreaseViewBookSuccess()
+    {
+        $headers = $this->getHeaders();
+        $book = factory(Book::class)->create();
+
+        $response = $this->call('GET', route('api.v0.books.increaseView', $book->id), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('books', [
+            'count_view' => $book->count_view + 1
+        ]);
+    }
+
     /* TEST LIST BOOKS */
 
     public function testListBookSearchSuccess()

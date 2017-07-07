@@ -30,4 +30,6 @@ interface BookRepository extends AbstractRepository
     public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = []);
 
     public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = []);
+
+    public function increaseView(Book $book);
 }
