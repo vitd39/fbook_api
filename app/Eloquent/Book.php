@@ -82,7 +82,7 @@ class Book extends AbstractEloquent
 
     public function image()
     {
-        return $this->morphOne(Media::class, 'target')->where('type', config('model.media.type.image_book'));
+        return $this->morphOne(Media::class, 'target')->where('type', config('model.media.type.avatar_book'));
     }
 
     public function scopeGetData($query, $field, $filters = [], $orderBy = 'DESC')

@@ -46,7 +46,7 @@ class BooksTableSeeder extends Seeder
                 'name' => $faker->sentence(5),
                 'path' => 'images/picture.jpg',
                 'size' => $faker->numberBetween(500, 1024),
-                'type' => config('model.media.type.image_book'),
+                'type' => config('model.media.type.avatar_book'),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

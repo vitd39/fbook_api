@@ -624,7 +624,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
-        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
+        $dataBook['medias'][0]['type'] = config('model.media.type.avatar_book');
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -663,7 +663,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
-        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
+        $dataBook['medias'][0]['type'] = config('model.media.type.avatar_book');
 
         $response = $this->call('POST', route('api.v0.books.store'), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -688,7 +688,7 @@ class BookTest extends TestCase
         $dataBook['category_id'] = factory(Category::class)->create()->id;
         $dataBook['office_id'] = factory(Office::class)->create()->id;
         $dataBook['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
-        $dataBook['medias'][0]['type'] = config('model.media.type.image_book');
+        $dataBook['medias'][0]['type'] = config('model.media.type.avatar_book');
 
         $response = $this->call('PUT', route('api.v0.books.update', $bookId), $dataBook, [], [], $headers);
         $response->assertJsonStructure([
@@ -743,7 +743,7 @@ class BookTest extends TestCase
         ])->assertStatus(401);
     }
 
-    /* TEST STORE BOOKS */
+    /* TEST DELETE BOOKS */
 
     public function testDeleteBookWithInvalidBookId()
     {
@@ -866,5 +866,70 @@ class BookTest extends TestCase
                 'description' => [translate('exception.not_found')]
             ]
         ])->assertStatus(404);
+    }
+
+    /* TEST UPLOAD MEDIA FOR BOOKS */
+
+    public function testUploadMediaForBookNotOwner()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $data['book_id'] = factory(Book::class)->create()->id;
+        $data['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $data['medias'][0]['type'] = config('model.media.type.avatar_book');
+        $data['medias'][1]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $data['medias'][1]['type'] = config('model.media.type.not_avatar_book');
+
+        $response = $this->call('POST', route('api.v0.books.uploadMedia'), $data, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 400,
+            ]
+        ])->assertStatus(400);
+    }
+
+    public function testUploadMediaForBookWithFieldsNull()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('POST', route('api.v0.books.uploadMedia'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 422,
+            ]
+        ])->assertStatus(422);
+    }
+
+    public function testUploadMediaForBookWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $data['book_id'] = factory(Book::class)->create()->id;
+        $data['medias'][0]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $data['medias'][0]['type'] = config('model.media.type.avatar_book');
+        $data['medias'][1]['file'] = UploadedFile::fake()->image(str_random(20) . '.jpg', 100, 100)->size(100);
+        $data['medias'][1]['type'] = config('model.media.type.not_avatar_book');
+
+        $response = $this->call('POST', route('api.v0.books.uploadMedia'), $data, [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
     }
 }

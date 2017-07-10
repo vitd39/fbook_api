@@ -17,10 +17,7 @@ return [
             'count_view',
             'status',
             'created_at'
-        ],
-        'interested_books' => [
-            'books_per_page' => 6,
-        ],
+        ]
     ],
     'book_user' => [
         'status' => [
@@ -77,7 +74,8 @@ return [
     'user_sharing_book' => 'sharing',
     'media' => [
         'type' => [
-            'image_book' => 1
+            'avatar_book' => 1,
+            'not_avatar_book' => 0
         ],
     ],
     'book_user_status_cancel' => 4

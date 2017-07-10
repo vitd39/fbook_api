@@ -463,4 +463,11 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->getData($input['sort']['field'], $input['filters'], $input['sort']['type'])
             ->paginate(config('paginate.default'));
     }
+
+    public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository)
+    {
+        $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
+
+        return $book->load('category', 'office', 'media');
+    }
 }

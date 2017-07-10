@@ -62,12 +62,12 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             return app(Book::class)
                 ->getLatestBooks($dataSelect, $with)
                 ->whereIn('category_id', $tags)
-                ->paginate(config('model.book.interested_books.books_per_page'));
-        } else {
-            return app(Book::class)
-                ->getLatestBooks($dataSelect, $with)
-                ->paginate(config('model.book.interested_books.books_per_page'));
+                ->paginate(config('paginate.default'));
         }
+
+        return app(Book::class)
+            ->getLatestBooks($dataSelect, $with)
+            ->paginate(config('paginate.default'));
     }
 
     public function show($id)
