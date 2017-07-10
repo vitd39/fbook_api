@@ -259,4 +259,40 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(404);
     }
+
+    /* TEST GET OWNED OF USER */
+
+    public function testOwnedOfUserSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.books.owned'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testOwnedOfUserWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.books.owned'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
 }

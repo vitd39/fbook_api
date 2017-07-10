@@ -74,4 +74,22 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     {
         return $this->model()->findOrFail($id);
     }
+
+    public function ownedBooks($dataSelect = ['*'], $with = [])
+    {
+        $books = app(Book::class)
+            ->select($dataSelect)
+            ->with(array_merge($with, ['userReadingBook' => function($query) {
+                $query->select('id', 'name', 'avatar', 'position');
+            }]))
+            ->where('owner_id', $this->user->id)
+            ->paginate(config('paginate.default'));
+
+        foreach ($books->items() as $book) {
+            $book->user_reading_book = $book->userReadingBook->first();
+            unset($book['userReadingBook']);
+        }
+
+        return $books;
+    }
 }

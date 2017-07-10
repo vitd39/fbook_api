@@ -106,4 +106,13 @@ class UserController extends ApiController
             );
         });
     }
+
+    public function ownedBooks()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['items'] = $this->reFormatPaginate(
+                $this->repository->ownedBooks($this->bookSelect, ['image'])
+            );
+        });
+    }
 }
