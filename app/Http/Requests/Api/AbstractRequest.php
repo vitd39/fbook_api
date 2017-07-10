@@ -25,8 +25,8 @@ abstract class AbstractRequest extends FormRequest
         $validationFactory->extend(
             'unique_book_image', function ($attribute, $value, $parameters) {
                 return count(array_where(array_pluck($value, $parameters), function ($value) {
-                    return $value == config('model.media.type.image_book');
-                })) == 1;
+                    return $value == config('model.media.type.avatar_book');
+                })) <= 1;
             }, __('validation.custom.unique_book_image')
         );
 

@@ -16,6 +16,7 @@ use App\Http\Requests\Api\Book\ReviewRequest;
 use App\Http\Requests\Api\Book\StoreRequest;
 use App\Contracts\Repositories\MediaRepository;
 use App\Http\Requests\Api\Book\UpdateRequest;
+use App\Http\Requests\Api\Book\UploadMediaRequest;
 
 class BookController extends ApiController
 {
@@ -257,5 +258,17 @@ class BookController extends ApiController
                 ]
             ];
         });
+    }
+
+    public function uploadMedia(UploadMediaRequest $request, MediaRepository $mediaRepository)
+    {
+        $data = $request->all();
+
+        return $this->doAction(function () use ($data, $mediaRepository) {
+            $book = $this->repository->findOrFail($data['book_id']);
+            $this->before('update', $book);
+
+            $this->compacts['item'] = $this->repository->uploadMedia($book, $data, $mediaRepository);
+        }, __FUNCTION__);
     }
 }
