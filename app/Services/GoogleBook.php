@@ -55,7 +55,7 @@ class GoogleBook implements GoogleBookInterface
         }
     }
 
-    private function formatResponse($response)
+    private function formatResponseSearch($response)
     {
         $books = [];
 
@@ -71,6 +71,16 @@ class GoogleBook implements GoogleBookInterface
         return $books;
     }
 
+    private function formatResponseDetail($response)
+    {
+        if (!isset($response->error)) {
+            return [
+                'id' => $response->id,
+                'volumeInfo' => $response->volumeInfo,
+            ];
+        }
+    }
+
     private function getUrl($path, $parameters = [])
     {
         $params = array_merge($parameters, $this->getAuth());
@@ -80,9 +90,18 @@ class GoogleBook implements GoogleBookInterface
 
     public function search(array $params)
     {
-        return $this->formatResponse(
-            $this->request(function () use ($params) {
+        return $this->formatResponseSearch(
+            $this->request(function() use ($params) {
                 return $this->client->get($this->getUrl('volumes/', $params));
+            })
+        );
+    }
+
+    public function detail(string $bookId)
+    {
+        return $this->formatResponseDetail(
+            $this->request(function() use ($bookId) {
+                return $this->client->get($this->getUrl("volumes/$bookId"));
             })
         );
     }
