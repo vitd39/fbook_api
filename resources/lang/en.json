@@ -1,6 +1,6 @@
 {
   "app":{
-    "name": "Trippa",
+    "name": "Fbook Framgia",
     "version": ":param"
   },
   "exception": {
@@ -35,10 +35,10 @@
     "invalid": ":param is invalid value"
   },
   "title_key": {
-    "latest" : "The latest books",
-    "view" : "The most view books",
-    "rating" : "The rating books",
-    "waiting" : "The waiting books",
-    "read" : "The most read books"
+    "latest" : "Latest books",
+    "view" : "Top viewed books",
+    "rating" : "Top rating books",
+    "waiting" : "Top waiting books",
+    "read" : "Top read books"
   }
 }
