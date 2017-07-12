@@ -14,9 +14,7 @@ class HomeController extends ApiController
         'author',
         'publish_date',
         'total_page',
-        'avg_star',
         'count_view',
-        'status',
         'category_id',
         'office_id'
     ];
@@ -39,6 +37,13 @@ class HomeController extends ApiController
         'name',
     ];
 
+    protected $ownerSelect = [
+        'id',
+        'name',
+        'avatar',
+        'position',
+    ];
+
     protected $bookRepository;
 
     public function __construct(BookRepository $bookRepository)
@@ -52,7 +57,10 @@ class HomeController extends ApiController
         $relations = [
             'image' => function ($q) {
                 $q->select($this->imageSelect);
-            }
+            },
+            'owners'=> function ($q) {
+                $q->select($this->ownerSelect);
+            },
         ];
 
         return $this->getData(function() use ($relations){
