@@ -23,9 +23,11 @@ return [
         'status' => [
             'waiting' => 1,
             'reading' => 2,
-            'done' => 3,
+            'returning' => 3,
+            'returned' => 4,
         ]
     ],
+    'book_user_status_cancel' => 5,
     'filter_books' => [
         'view' => [
             'key' => 'view',
@@ -78,5 +80,4 @@ return [
             'not_avatar_book' => 0
         ],
     ],
-    'book_user_status_cancel' => 4
 ];

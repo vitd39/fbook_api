@@ -30,11 +30,6 @@ class Book extends AbstractEloquent
 
     protected $appends = ['overview'];
 
-    public function owner()
-    {
-        return $this->belongsTo(User::class);
-    }
-
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -47,27 +42,32 @@ class Book extends AbstractEloquent
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('status', 'type');
+        return $this->belongsToMany(User::class)->withPivot('status', 'type', 'created_at', 'updated_at');
     }
 
     public function owners()
     {
-        return $this->belongsToMany(User::class, 'owners');
+        return $this->belongsToMany(User::class, 'owners')->withPivot('avg_star');
     }
 
-    public function userReadingBook()
+    public function userReading()
     {
-        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.reading'));
+        return $this->users()->wherePivot('status', config('model.book_user.status.reading'));
     }
 
-    public function usersWaitingBook()
+    public function usersWaiting()
     {
-        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.waiting'));
+        return $this->users()->wherePivot('status', config('model.book_user.status.waiting'));
     }
 
-    public function usersReadBook()
+    public function userReturning()
     {
-        return $this->belongsToMany(User::class)->wherePivot('status', config('model.book_user.status.done'));
+        return $this->users()->wherePivot('status', config('model.book_user.status.returning'));
+    }
+
+    public function usersReturned()
+    {
+        return $this->users()->wherePivot('status', config('model.book_user.status.returned'));
     }
 
     public function reviews()
@@ -75,9 +75,9 @@ class Book extends AbstractEloquent
         return $this->belongsToMany(User::class, 'reviews')->withPivot('content', 'star');
     }
 
-    public function reviewsDetailBook()
+    public function reviewsDetail()
     {
-        return $this->hasMany(Review::class, 'book_id')->with('user');
+        return $this->hasMany(Review::class, 'book_id')->with('user', 'owner');
     }
 
     public function media()
