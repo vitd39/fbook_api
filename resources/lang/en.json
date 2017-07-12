@@ -16,7 +16,7 @@
     "not_found": "Item not exists",
     "not_owner": "Not owner",
     "unknown_error": "Unknown error",
-    "not_first_waiting_list": "You have to first in waiting list"
+    "not_booking_book_owned": "You can't booking book which you owned"
   },
   "http_message": {
     "not_modified": "Not Modified",
