@@ -50,7 +50,7 @@ class Book extends AbstractEloquent
         return $this->belongsToMany(User::class, 'owners')->withPivot('avg_star');
     }
 
-    public function userReading()
+    public function usersReading()
     {
         return $this->users()->wherePivot('status', config('model.book_user.status.reading'));
     }
@@ -60,7 +60,7 @@ class Book extends AbstractEloquent
         return $this->users()->wherePivot('status', config('model.book_user.status.waiting'));
     }
 
-    public function userReturning()
+    public function usersReturning()
     {
         return $this->users()->wherePivot('status', config('model.book_user.status.returning'));
     }

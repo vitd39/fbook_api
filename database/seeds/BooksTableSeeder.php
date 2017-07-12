@@ -30,16 +30,9 @@ class BooksTableSeeder extends Seeder
 
             foreach ($userIds as $key => $userId) {
                 $star = $faker->numberBetween(1, 5);
-                $status = $faker->randomElement(array_only(config('model.book_user.status'), ['waiting', 'returned']));
-
-                if ($key == 1) {
-                    $status = config('model.book_user.status.reading');
-                } else if ($key == 2) {
-                    $status = config('model.book_user.status.returning');
-                }
 
                 $book->users()->attach($userId, [
-                    'status' =>  $status,
+                    'status' =>  $faker->randomElement(config('model.book_user.status')),
                     'owner_id' => $faker->randomElement($ownerIds),
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
