@@ -209,7 +209,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     protected function getBooksByRead($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
     {
         return $this->getBooksByBookUserStatus(
-            config('model.book_user.status.done'), $with, $dataSelect, $limit, $attribute
+            config('model.book_user.status.returned'), $with, $dataSelect, $limit, $attribute
         );
     }
 

@@ -27,9 +27,7 @@ class BookController extends ApiController
         'author',
         'publish_date',
         'total_page',
-        'avg_star',
         'count_view',
-        'status',
         'category_id',
         'office_id'
     ];
