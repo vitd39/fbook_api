@@ -17,5 +17,4 @@ class BookUser extends AbstractEloquent
     {
         return $this->belongsTo(Book::class);
     }
-
 }

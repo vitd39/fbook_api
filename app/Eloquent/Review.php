@@ -13,7 +13,7 @@ class Review extends Model
         'star'
     ];
 
-    protected $hidden = ['user_id', 'book_id', 'updated_at'];
+    protected $hidden = ['user_id', 'book_id', 'owner_id', 'updated_at'];
 
     public function user()
     {
@@ -23,5 +23,10 @@ class Review extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'default' => 15,
+    'default' => 16,
     'book_home_limit' => 6,
     'overview_limit' => 50,
 ];

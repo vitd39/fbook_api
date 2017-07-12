@@ -19,6 +19,19 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
 {
     use UploadableTrait;
 
+    protected $userSelect = [
+        'id',
+        'name',
+        'email',
+        'phone',
+        'code',
+        'position',
+        'role',
+        'office_id',
+        'avatar',
+        'tags',
+    ];
+
     public function model()
     {
         return new \App\Eloquent\Book;
@@ -335,15 +348,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     {
         try {
             $book = $this->model()->findOrFail($id);
-            $book->user_reading_book = $book->userReadingBook()->select('id', 'name', 'avatar', 'position')->first();
+            $book->user_reading = $book->userReading()->select($this->userSelect)->first();
+            $book->user_returning = $book->userReturning()->select($this->userSelect)->first();
 
-            return  $book->load(['media', 'reviewsDetailBook',
-                'usersWaitingBook' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+            return  $book->load(['media','reviewsDetail',
+                'usersWaiting' => function($query) {
+                    $query->select(array_merge($this->userSelect, ['owner_id']));
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
-                'usersReadBook' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+                'usersReturned' => function($query) {
+                    $query->select(array_merge($this->userSelect, ['owner_id']));
                     $query->orderBy('book_user.created_at', 'DESC');
                 },
                 'category' => function($query) {
@@ -352,9 +366,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 'office' => function($query) {
                     $query->select('id', 'name');
                 },
-                'owner' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
-                },
+                'owners' => function($query) {
+                    $query->select(array_merge($this->userSelect, ['avg_star']));
+                }
             ]);
         } catch (ModelNotFoundException $e) {
             Log::error($e->getMessage());
