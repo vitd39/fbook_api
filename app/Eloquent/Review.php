@@ -24,9 +24,4 @@ class Review extends Model
     {
         return $this->belongsTo(Book::class);
     }
-
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'owner_id');
-    }
 }
