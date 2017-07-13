@@ -18,7 +18,6 @@
     "unknown_error": "Unknown error",
     "not_booking_book_owned": "You can't booking book which you owned",
     "not_first_waiting_list": "You have to first in waiting list",
-    "review": "Owner id must belong to book",
   },
   "http_message": {
     "not_modified": "Not Modified",

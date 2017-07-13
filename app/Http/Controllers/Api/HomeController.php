@@ -16,7 +16,8 @@ class HomeController extends ApiController
         'total_page',
         'count_view',
         'category_id',
-        'office_id'
+        'office_id',
+        'avg_star',
     ];
 
     protected $imageSelect = [
