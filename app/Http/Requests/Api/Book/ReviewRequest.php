@@ -24,7 +24,8 @@ class ReviewRequest extends AbstractRequest
     public function rules()
     {
         return [
-            'item' => 'required|array|max:2',
+            'item' => 'required|array|max:3',
+            'item.owner_id' => 'required|numeric',
             'item.content' => 'required|max:255',
             'item.star' => 'numeric|between:1,5',
         ];
