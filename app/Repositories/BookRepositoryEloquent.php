@@ -235,67 +235,38 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
 
     public function booking(Book $book, array $attributes)
     {
-        if ($book->status == config('model.book.status.available')) {
-            $waitingList = $book->usersWaitingBook()->orderBy('created_at')->get();
+        $ownerId = $attributes['item']['owner_id'];
 
-            if (count($waitingList)) {
-                if ($waitingList->first()->pivot->user_id == $this->user->id) {
+        if ($ownerId === $this->user->id) {
+            throw new ActionException('not_booking_book_owned');
+        }
 
-                    $book->update(['status' => config('model.book.status.unavailable')]);
+        $checkUser = $book->users()->where(['user_id' => $this->user->id, 'owner_id' => $ownerId])->first();
 
-                    $book->users()->updateExistingPivot($this->user->id, [
-                        'book_user.status' => config('model.book_user.status.reading'),
-                    ]);
-                } else {
-                    $checkUser = $book->users()->find($this->user->id);
-
-                    if ($checkUser) {
-                        throw new ActionException('not_first_waiting_list');
-                    }
-
-                    $book->users()->attach($this->user->id, [
-                        'status' => config('model.book_user.status.waiting'),
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    ]);
-                }
-            } else {
-                $book->update(['status' => config('model.book.status.unavailable')]);
-
-                $book->users()->attach($this->user->id, [
-                    'book_user.status' => config('model.book_user.status.reading'),
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
+        if ($checkUser) {
+            if (
+                $checkUser->pivot->status == config('model.book_user.status.reading')
+                && (
+                    $attributes['item']['status'] == config('model.book_user.status.returning')
+                    || $attributes['item']['status'] == config('model.book_user.status.returned')
+                )
+            ) {
+                $book->users()->updateExistingPivot($this->user->id, [
+                    'status' => config('model.book_user.status.returning'),
                 ]);
+            } elseif (
+                $checkUser->pivot->status == config('model.book_user.status.waiting')
+                && $attributes['item']['status'] == config('model.book_user_status_cancel')
+            ) {
+                $book->users()->detach($this->user->id);
             }
         } else {
-            $checkUser = $book->users()->find($this->user->id);
-
-            if ($checkUser) {
-                if (
-                    $checkUser->pivot->status == config('model.book_user.status.reading')
-                    && $attributes['item']['status'] == config('model.book_user.status.done')
-                ) {
-                    $book->update(['status' => config('model.book.status.available')]);
-
-                    $book->users()->detach($this->user->id);
-                } elseif (
-                    $checkUser->pivot->status == config('model.book_user.status.waiting')
-                    && $attributes['item']['status'] == config('model.book_user_status_cancel')
-                ) {
-                    $book->users()->detach($this->user->id);
-                } else {
-                    $book->users()->updateExistingPivot($this->user->id, [
-                        'status' => config('model.book_user.status.waiting'),
-                    ]);
-                }
-            } else {
-                $book->users()->attach($this->user->id, [
-                    'status' => config('model.book_user.status.waiting'),
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
-            }
+            $book->users()->attach($this->user->id, [
+                'status' => config('model.book_user.status.waiting'),
+                'owner_id' => $ownerId,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
         }
     }
 

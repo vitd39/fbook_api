@@ -24,6 +24,7 @@ class BooksTableSeeder extends Seeder
             foreach ($ownerIds as $ownerId) {
                 $book->owners()->attach($ownerId, [
                     'created_at' => Carbon::now(),
+                    'status' => $faker->randomElement(config('model.book.status')),
                     'updated_at' => Carbon::now(),
                 ]);
             }
