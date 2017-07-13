@@ -67,7 +67,7 @@ class BookController extends ApiController
 
         $relations = ['image'];
 
-        return $this->getData(function () use ($relations, $field) {
+        return $this->getData(function() use ($relations, $field) {
             $data = $this->repository->getBooksByFields($relations, $this->select, $field);
 
             $this->compacts['item'] = $this->reFormatPaginate($data);
@@ -85,7 +85,7 @@ class BookController extends ApiController
     {
         $data = $request->all();
 
-        return $this->doAction(function () use ($data, $mediaRepository) {
+        return $this->doAction(function() use ($data, $mediaRepository) {
             $this->compacts['item'] = $this->repository->store($data, $mediaRepository);
         });
     }
@@ -94,7 +94,7 @@ class BookController extends ApiController
     {
         $data = $request->all();
 
-        return $this->doAction(function () use ($data, $id, $mediaRepository) {
+        return $this->doAction(function() use ($data, $id, $mediaRepository) {
             $book = $this->repository->findOrFail($id);
             $this->before('update', $book);
 
@@ -104,7 +104,7 @@ class BookController extends ApiController
 
     public function increaseView($id)
     {
-        return $this->doAction(function () use ($id) {
+        return $this->doAction(function() use ($id) {
             $book = $this->repository->findOrFail($id);
 
             $this->repository->increaseView($book);
@@ -113,7 +113,7 @@ class BookController extends ApiController
 
     public function destroy($id)
     {
-        return $this->doAction(function () use ($id) {
+        return $this->doAction(function() use ($id) {
             $book = $this->repository->findOrFail($id);
             $this->before('delete', $book);
 
@@ -136,7 +136,7 @@ class BookController extends ApiController
     {
         $data = $request->all();
 
-        return $this->doAction(function () use ($data) {
+        return $this->doAction(function() use ($data) {
             $book = $this->repository->findOrfail($data['item']['book_id']);
 
             $this->repository->booking($book, $data);
@@ -154,7 +154,7 @@ class BookController extends ApiController
     {
         $data = $request->item;
 
-        return $this->requestAction(function () use ($bookId, $data) {
+        return $this->doAction(function() use ($bookId, $data) {
             $this->repository->review($bookId, $data);
         });
     }
@@ -177,7 +177,7 @@ class BookController extends ApiController
             }
         ];
 
-        return $this->getData(function () use ($relations, $field, $input) {
+        return $this->getData(function() use ($relations, $field, $input) {
             $data = $this->repository->getBooksByFields($relations, $this->select, $field, $input);
 
             $this->compacts['item'] = $this->reFormatPaginate($data);
@@ -201,7 +201,7 @@ class BookController extends ApiController
             }
         ];
 
-        return $this->getData(function () use ($relations, $category) {
+        return $this->getData(function() use ($relations, $category) {
             $bookCategory = $this->repository->getBookByCategory($category->id, $this->select, $relations);
             $currentPage = $bookCategory->currentPage();
 
@@ -239,7 +239,7 @@ class BookController extends ApiController
             }
         ];
 
-        return $this->getData(function () use ($relations, $category, $input) {
+        return $this->getData(function() use ($relations, $category, $input) {
             $bookCategory = $this->repository->getBookFilteredByCategory($category->id, $input, $this->select, $relations);
             $currentPage = $bookCategory->currentPage();
 
@@ -262,7 +262,7 @@ class BookController extends ApiController
     {
         $data = $request->all();
 
-        return $this->doAction(function () use ($data, $mediaRepository) {
+        return $this->doAction(function() use ($data, $mediaRepository) {
             $book = $this->repository->findOrFail($data['book_id']);
             $this->before('update', $book);
 
