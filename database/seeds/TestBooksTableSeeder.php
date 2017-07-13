@@ -40,13 +40,16 @@ class TestBooksTableSeeder extends Seeder
 
                 $book->reviews()->attach($userId, [
                     'content' => $faker->text(200),
-                    'owner_id' => $faker->randomElement($ownerIds),
                     'star' => $star,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
                 $stars[] = $star;
             }
+
+            $book->update([
+                'avg_star' => array_sum($stars) / count($stars),
+            ]);
 
             $book->media()->create([
                 'name' => $faker->sentence(5),

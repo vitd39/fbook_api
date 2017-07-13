@@ -47,7 +47,7 @@ class Book extends AbstractEloquent
 
     public function owners()
     {
-        return $this->belongsToMany(User::class, 'owners')->withPivot('avg_star');
+        return $this->belongsToMany(User::class, 'owners')->withPivot('status');
     }
 
     public function usersReading()
@@ -77,7 +77,7 @@ class Book extends AbstractEloquent
 
     public function reviewsDetail()
     {
-        return $this->hasMany(Review::class, 'book_id')->with('user', 'owner');
+        return $this->hasMany(Review::class, 'book_id')->with('user');
     }
 
     public function media()
