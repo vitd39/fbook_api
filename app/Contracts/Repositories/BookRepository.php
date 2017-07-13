@@ -36,4 +36,6 @@ interface BookRepository extends AbstractRepository
     public function addOwner($id);
 
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository);
+
+    public function approve(Book $book, $userId);
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Contracts\Repositories\BookRepository;
 use App\Contracts\Repositories\CategoryRepository;
 use App\Exceptions\Api\NotFoundException;
+use App\Http\Requests\Api\Book\ApproveRequest;
 use App\Http\Requests\Api\Book\BookFilteredByCategoryRequest;
 use App\Http\Requests\Api\Book\BookFilterRequest;
 use App\Http\Requests\Api\Book\FilterBookInCategoryRequest;
@@ -141,6 +142,18 @@ class BookController extends ApiController
             $book = $this->repository->findOrfail($data['item']['book_id']);
 
             $this->repository->booking($book, $data);
+        });
+    }
+
+    public function approve($bookId, ApproveRequest $request)
+    {
+        $data = $request->all();
+
+        return $this->doAction(function () use ($data, $bookId) {
+            $book = $this->repository->findOrfail($bookId);
+            $this->before('update', $book);
+
+            $this->repository->approve($book, $data['item']['user_id']);
         });
     }
 

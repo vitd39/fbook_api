@@ -17,9 +17,10 @@
     "not_owner": "Not owner",
     "unknown_error": "Unknown error",
     "not_booking_book_owned": "You can't booking book which you owned",
-    "not_first_waiting_list": "You have to first in waiting list",
     "ownered_current_book": "You ownered this book",
-
+    "not_in_waiting_list": "User haven't in waiting list",
+    "other_user_reading_book": "Other user reading this book",
+    "data_invalid": "Data invalid"
   },
   "http_message": {
     "not_modified": "Not Modified",
