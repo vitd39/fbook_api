@@ -775,6 +775,42 @@ class BookTest extends TestCase
         ])->assertStatus(404);
     }
 
+    /* TEST ADD OWNER BOOK*/
+
+    public function testAddOwnerBookSuccess()
+    {
+        $bookId = factory(Book::class)->create()->id;
+        $response = $this->call('GET', route('api.v0.books.add-owner', $bookId), [], [], [], $this->getFauthHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testAddOwnerBookIdInvalid()
+    {
+        $response = $this->call('GET', route('api.v0.books.add-owner', 0), [], [], [], $this->getFauthHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+                'description' => [translate('exception.not_found')]
+            ]
+        ])->assertStatus(404);
+    }
+
     /* TEST GET BOOK FILTERED BY CATEGORY */
 
     public function testGetBooksFilteredByCategorySuccess()

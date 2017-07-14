@@ -259,6 +259,13 @@ class BookController extends ApiController
         });
     }
 
+    public function addOwner($id)
+    {
+        return $this->requestAction(function() use ($id) {
+            $this->repository->addOwner($id);
+        });
+    }
+
     public function uploadMedia(UploadMediaRequest $request, MediaRepository $mediaRepository)
     {
         $data = $request->all();

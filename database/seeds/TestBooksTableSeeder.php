@@ -32,7 +32,6 @@ class TestBooksTableSeeder extends Seeder
                 $star = $faker->numberBetween(1, 5);
 
                 $book->users()->attach($userId, [
-                    'status' => $faker->randomElement(config('model.book_user.status')),
                     'owner_id' => $faker->randomElement($ownerIds),
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),

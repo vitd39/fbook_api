@@ -55,6 +55,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::resource('books', 'BookController', [
             'only' => ['store', 'update', 'destroy']
         ]);
+        Route::get('books/add-owner/{book_id}', ['as' => 'books.add-owner', 'uses' => 'BookController@addOwner']);
         Route::post('books/upload-media', ['as' => 'books.uploadMedia', 'uses' => 'BookController@uploadMedia']);
     });
 });

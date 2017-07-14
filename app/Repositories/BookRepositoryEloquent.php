@@ -458,6 +458,21 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->paginate(config('paginate.default'));
     }
 
+    public function addOwner($id)
+    {
+        $book = $this->model()->findOrFail($id);
+        $owneredCurrentBook = $book->owners()->where('user_id', $this->user->id)->count() !== 0;
+
+        if (!$owneredCurrentBook) {
+            $book->owners()->attach($this->user->id, [
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+        } else {
+            throw new ActionException('ownered_current_book');
+        }
+    }
+
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository)
     {
         $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
