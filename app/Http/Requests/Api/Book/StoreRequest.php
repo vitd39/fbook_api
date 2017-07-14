@@ -27,7 +27,6 @@ class StoreRequest extends AbstractRequest
             'title' => 'required|max:255',
             'author' => 'required|max:255',
             'publish_date' => 'nullable|date_format:Y-m-d',
-            'code' => 'required|max:100|unique:books,code',
             'category_id' => 'required|numeric|exists:categories,id',
             'office_id' => 'required|numeric|exists:offices,id',
             'medias' => 'array|max:3|unique_book_image:type',

@@ -93,7 +93,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         return $books;
     }
 
-    public function getListApproved($dataSelect = ['*'], $with = [])
+    public function getListWaitingApprove($dataSelect = ['*'], $with = [])
     {
         $bookOfCurrentUser = $this->user->owners()->get();
 

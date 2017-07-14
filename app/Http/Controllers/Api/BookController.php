@@ -34,6 +34,13 @@ class BookController extends ApiController
         'avg_star',
     ];
 
+    protected $ownerSelect = [
+        'id',
+        'name',
+        'avatar',
+        'position'
+    ];
+
     protected $imageSelect = [
         'path',
         'size',
@@ -67,7 +74,14 @@ class BookController extends ApiController
             throw new ActionException;
         }
 
-        $relations = ['image'];
+        $relations = [
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
+            },
+            'image' => function ($q) {
+                $q->select($this->imageSelect);
+            },
+        ];
 
         return $this->getData(function() use ($relations, $field) {
             $data = $this->repository->getBooksByFields($relations, $this->select, $field);
@@ -129,7 +143,7 @@ class BookController extends ApiController
 
         return $this->getData(function() use($data) {
             $this->compacts['items'] = $this->reFormatPaginate(
-                $this->repository->getDataSearch($data, ['image', 'category', 'office'], $this->select)
+                $this->repository->getDataSearch($data, ['image', 'category', 'office', 'owners'], $this->select)
             );
         });
     }
@@ -180,6 +194,9 @@ class BookController extends ApiController
         $input = $request->all();
 
         $relations = [
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
+            },
             'image' => function ($q) {
                 $q->select($this->imageSelect);
             },
@@ -207,6 +224,9 @@ class BookController extends ApiController
         }
 
         $relations = [
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
+            },
             'image' => function ($q) {
                 $q->select($this->imageSelect);
             },
@@ -245,6 +265,9 @@ class BookController extends ApiController
         }
 
         $relations = [
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
+            },
             'image' => function ($q) {
                 $q->select($this->imageSelect);
             },
