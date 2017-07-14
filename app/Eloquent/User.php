@@ -66,6 +66,6 @@ class User extends Authenticatable
 
     public function owners()
     {
-        return $this->hasMany(Book::class, 'owner_id');
+        return $this->belongsToMany(Book::class, 'owners', 'user_id');
     }
 }

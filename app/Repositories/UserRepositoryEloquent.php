@@ -92,4 +92,27 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
         return $books;
     }
+
+    public function getListApproved($dataSelect = ['*'], $with = [])
+    {
+        $bookOfCurrentUser = $this->user->owners()->get();
+
+        $books = app(Book::class)
+            ->select($dataSelect)
+            ->with(array_merge($with, [
+                'usersWaiting' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->orderBy('book_user.created_at', 'ASC');
+                },
+                'usersReturning' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                }
+            ]))
+            ->whereIn('id', $bookOfCurrentUser->pluck('id')->toArray())
+            ->orderBy('created_at', 'DESC')
+            ->paginate(config('paginate.default'));
+
+        return $books;
+    }
 }

@@ -45,6 +45,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
 
     Route::group(['middleware' => 'fapi'], function () {
         Route::get('user-profile', ['as' => 'user.profile', 'uses' => 'UserController@getUserFromToken']);
+        Route::get('user/books/approved', ['as' => 'user.books.listApproved', 'uses' => 'UserController@getListApproved']);
         Route::post('users/add-tags', ['as' => 'user.add.tags', 'uses' => 'UserController@addTags']);
         Route::get('users/interested-books', ['as' => 'user.interested.books', 'uses' => 'UserController@getInterestedBooks']);
         Route::resource('users', 'UserController');
