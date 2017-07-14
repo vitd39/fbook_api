@@ -113,4 +113,13 @@ class UserController extends ApiController
             );
         });
     }
+
+    public function getListApproved()
+    {
+        return $this->getData(function() {
+            $data = $this->repository->getListApproved($this->bookSelect, $this->relations);
+
+            $this->compacts['items'] = $this->reFormatPaginate($data);
+        });
+    }
 }
