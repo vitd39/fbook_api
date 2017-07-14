@@ -923,4 +923,67 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(401);
     }
+
+    /* TEST APPROVE BOOK */
+
+    public function testApproveBookWithBookInValid()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $data['user_id'] = $this->createUser()->id;
+
+        $response = $this->call('POST', route('api.v0.books.approve', 0), ['item' => $data], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
+
+    public function testApproveBookWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $bookId = factory(Book::class)->create()->id;
+        $data['user_id'] = $this->createUser()->id;
+
+        $response = $this->call('POST', route('api.v0.books.approve', $bookId), ['item' => $data], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testApproveBookWithNotOwner()
+    {
+        $headers = $this->getFauthHeaders();
+        $book = factory(Book::class)->create();
+        $owner = $this->createUser();
+        $book->owners()->attach($owner->id, ['status' => config('model.book.status.available')]);
+
+        $data['user_id'] = $this->createUser()->id;
+
+        $response = $this->call('POST', route('api.v0.books.approve', $book->id), ['item' => $data], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 400,
+            ]
+        ])->assertStatus(400);
+    }
 }

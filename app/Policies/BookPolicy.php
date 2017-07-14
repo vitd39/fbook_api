@@ -14,11 +14,9 @@ class BookPolicy extends AbstractPolicy
 
     public function update(User $user, Book $ability)
     {
-        if (! isset($ability->owner_id)) {
-            return false;
-        }
+        $owner = $ability->owners()->where('user_id', $user->id)->count();
 
-        if ($user->id !== $ability->owner_id) {
+        if (! $owner) {
             return false;
         }
 
