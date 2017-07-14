@@ -81,7 +81,10 @@ class HomeController extends ApiController
             },
             'office' => function ($q) {
                 $q->select($this->officeSelect);
-            }
+            },
+            'owners'=> function ($q) {
+                $q->select($this->ownerSelect);
+            },
         ];
 
         return $this->getData(function() use ($relations, $filters){

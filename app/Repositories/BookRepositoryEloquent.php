@@ -398,6 +398,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     public function store(array $attributes, MediaRepository $mediaRepository)
     {
         $dataBook = array_only($attributes, $this->model()->getFillable());
+        $dataBook['code'] = sha1(time());
         $book = $this->model()->create($dataBook);
 
         $book->owners()->attach($this->user->id, [

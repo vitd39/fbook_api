@@ -14,6 +14,7 @@ class UserController extends ApiController
         'description',
         'author',
         'publish_date',
+        'avg_star',
         'total_page',
         'count_view',
         'category_id',
@@ -38,6 +39,13 @@ class UserController extends ApiController
         'name',
     ];
 
+    protected $ownerSelect = [
+        'id',
+        'name',
+        'avatar',
+        'position',
+    ];
+
     protected $relations = [];
 
     public function __construct(UserRepository $repository)
@@ -53,6 +61,9 @@ class UserController extends ApiController
             },
             'office' => function ($q) {
                 $q->select($this->officeSelect);
+            },
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
             }
         ];
     }
@@ -114,10 +125,10 @@ class UserController extends ApiController
         });
     }
 
-    public function getListApproved()
+    public function getListWaitingApprove()
     {
         return $this->getData(function() {
-            $data = $this->repository->getListApproved($this->bookSelect, $this->relations);
+            $data = $this->repository->getListWaitingApprove($this->bookSelect, $this->relations);
 
             $this->compacts['items'] = $this->reFormatPaginate($data);
         });

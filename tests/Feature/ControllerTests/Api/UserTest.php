@@ -298,11 +298,11 @@ class UserTest extends TestCase
 
     /* TEST GET LIST BOOK APPROVED */
 
-    public function testGetListApprovedSuccess()
+    public function testGetListWaitingApproveSuccess()
     {
         $headers = $this->getFauthHeaders();
 
-        $response = $this->call('GET', route('api.v0.user.books.listApproved'), [], [], [], $headers);
+        $response = $this->call('GET', route('api.v0.user.books.waiting-approve'), [], [], [], $headers);
 
         $response->assertJsonStructure([
             'items' => [
@@ -319,11 +319,11 @@ class UserTest extends TestCase
         ])->assertStatus(200);
     }
 
-    public function testGetListApprovedWithGuest()
+    public function testGetListWaitingApproveWithGuest()
     {
         $headers = $this->getHeaders();
 
-        $response = $this->call('GET', route('api.v0.user.books.listApproved'), [], [], [], $headers);
+        $response = $this->call('GET', route('api.v0.user.books.waiting-approve'), [], [], [], $headers);
 
         $response->assertJsonStructure([
             'message' => [
