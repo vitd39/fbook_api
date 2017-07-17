@@ -3,8 +3,9 @@
 namespace App\Eloquent;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Database\Eloquent\Model;
 
-class Book extends AbstractEloquent
+class Book extends Model
 {
     /**
      * The attributes that are mass assignable.
