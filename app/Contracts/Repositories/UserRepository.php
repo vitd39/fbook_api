@@ -17,4 +17,6 @@ interface UserRepository extends AbstractRepository
     public function ownedBooks($dataSelect = ['*'], $with = []);
 
     public function getListWaitingApprove($dataSelect = ['*'], $with = []);
+
+    public function getBookApproveDetail($bookId, $dataSelect = ['*'], $with = []);
 }

@@ -95,9 +95,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
     public function getListWaitingApprove($dataSelect = ['*'], $with = [])
     {
-        $bookOfCurrentUser = $this->user->owners()->get();
-
-        $books = app(Book::class)
+        $books = $this->user->owners()
             ->select($dataSelect)
             ->with(array_merge($with, [
                 'usersWaiting' => function($query) {
@@ -109,10 +107,26 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 }
             ]))
-            ->whereIn('id', $bookOfCurrentUser->pluck('id')->toArray())
             ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
 
         return $books;
+    }
+
+    public function getBookApproveDetail($bookId, $dataSelect = ['*'], $with = [])
+    {
+        return $this->user->owners()->where('book_id', $bookId)
+            ->select($dataSelect)
+            ->with(array_merge($with, [
+                'usersWaiting' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->orderBy('book_user.created_at', 'ASC');
+                },
+                'usersReturning' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                }
+            ]))
+            ->firstOrFail();
     }
 }

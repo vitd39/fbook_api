@@ -133,4 +133,11 @@ class UserController extends ApiController
             $this->compacts['items'] = $this->reFormatPaginate($data);
         });
     }
+
+    public function getBookApproveDetail($bookId)
+    {
+        return $this->getData(function() use ($bookId) {
+            $this->compacts['item'] = $this->repository->getBookApproveDetail($bookId, $this->bookSelect, $this->relations);
+        });
+    }
 }
