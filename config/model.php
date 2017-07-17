@@ -3,8 +3,8 @@
 return [
     'book' => [
         'status' => [
-            'unavailable' => 0,
-            'available' => 1,
+            'unavailable' => 'unavailable',
+            'available' => 'available',
         ],
         'fields' => [
             'title',

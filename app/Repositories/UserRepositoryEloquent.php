@@ -119,11 +119,11 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->select($dataSelect)
             ->with(array_merge($with, [
                 'usersWaiting' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->select('id', 'name', 'avatar', 'position', 'email');
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
                 'usersReturning' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->select('id', 'name', 'avatar', 'position', 'email');
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 }
             ]))
