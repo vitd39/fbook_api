@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use Faker\Factory;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Eloquent\Category;
@@ -335,5 +334,43 @@ class UserTest extends TestCase
                 'code' => 401,
             ]
         ])->assertStatus(401);
+    }
+
+    /* TEST GET BOOK APPROVED DETAIL */
+
+    public function testGetBookApproveDetailWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.books.approve.detail', 0), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testGetBookApproveDetailWithBookIdInValid()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.user.books.approve.detail', 0), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 500,
+            ]
+        ])->assertStatus(500);
     }
 }
