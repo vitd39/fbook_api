@@ -931,6 +931,7 @@ class BookTest extends TestCase
         $headers = $this->getFauthHeaders();
 
         $data['user_id'] = $this->createUser()->id;
+        $data['key'] = 'approve';
 
         $response = $this->call('POST', route('api.v0.books.approve', 0), ['item' => $data], [], [], $headers);
         $response->assertJsonStructure([
@@ -951,6 +952,7 @@ class BookTest extends TestCase
 
         $bookId = factory(Book::class)->create()->id;
         $data['user_id'] = $this->createUser()->id;
+        $data['key'] = 'approve';
 
         $response = $this->call('POST', route('api.v0.books.approve', $bookId), ['item' => $data], [], [], $headers);
         $response->assertJsonStructure([
@@ -973,6 +975,7 @@ class BookTest extends TestCase
         $book->owners()->attach($owner->id, ['status' => config('model.book.status.available')]);
 
         $data['user_id'] = $this->createUser()->id;
+        $data['key'] = 'approve';
 
         $response = $this->call('POST', route('api.v0.books.approve', $book->id), ['item' => $data], [], [], $headers);
         $response->assertJsonStructure([

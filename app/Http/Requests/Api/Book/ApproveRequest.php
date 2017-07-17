@@ -24,6 +24,7 @@ class ApproveRequest extends AbstractRequest
     public function rules()
     {
         return [
+            'item.key' => 'required|in:' . implode(config('settings.book_key'), ','),
             'item.user_id' => 'required|numeric|exists:users,id',
         ];
     }

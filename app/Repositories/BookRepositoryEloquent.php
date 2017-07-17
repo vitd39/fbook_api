@@ -481,25 +481,27 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $book->load('category', 'office', 'media');
     }
 
-    public function approve(Book $book, $userId)
+    public function approve(Book $book, $attribute = [])
     {
-        $ownerBook = $book->owners()->where('user_id', $this->user->id)->firstOrFail();
-        $waitingList = $book->usersWaiting()->where('user_id', $userId)->wherePivot('owner_id', $this->user->id)->count();
+        $userId = $attribute['user_id'];
+        $key = $attribute['key'];
 
-        if ($ownerBook->pivot->status == config('model.book.status.available')) {
-            if ($waitingList) {
-                $book->owners()->updateExistingPivot($this->user->id, [
-                    'status' => config('model.book.status.unavailable'),
-                ]);
-                $book->users()->updateExistingPivot($userId, [
-                    'status' => config('model.book_user.status.reading'),
-                ]);
-            } else {
-                throw new ActionException('not_in_waiting_list');
-            }
-        } else {
-            if ($waitingList) {
-                throw new ActionException('other_user_reading_book');
+        $ownerBook = $book->owners()->where('user_id', $this->user->id)->firstOrFail();
+
+        if ($key == config('settings.book_key.approve')) {
+            if ($ownerBook->pivot->status == config('model.book.status.available')) {
+                $waitingList = $book->usersWaiting()->where('user_id', $userId)->wherePivot('owner_id', $this->user->id)->count();
+
+                if ($waitingList) {
+                    $book->owners()->updateExistingPivot($this->user->id, [
+                        'status' => config('model.book.status.unavailable'),
+                    ]);
+                    $book->users()->updateExistingPivot($userId, [
+                        'status' => config('model.book_user.status.reading'),
+                    ]);
+                } else {
+                    throw new ActionException('not_in_waiting_list');
+                }
             } else {
                 $returningList = $book->usersReturning()->where('user_id', $userId)->wherePivot('owner_id', $this->user->id)->count();
 
@@ -514,6 +516,36 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     throw new ActionException('data_invalid');
                 }
             }
+        } elseif ($key == config('settings.book_key.unapprove')) {
+            if ($ownerBook->pivot->status == config('model.book.status.available')) {
+                $returnedList = $book->usersReturned()->where('user_id', $userId)->wherePivot('owner_id', $this->user->id)->count();
+
+                if ($returnedList) {
+                    $book->owners()->updateExistingPivot($this->user->id, [
+                        'status' => config('model.book.status.unavailable'),
+                    ]);
+                    $book->users()->updateExistingPivot($userId, [
+                        'status' => config('model.book_user.status.returning'),
+                    ]);
+                } else {
+                    throw new ActionException('data_invalid');
+                }
+            } else {
+                $readingList = $book->usersReading()->where('user_id', $userId)->wherePivot('owner_id', $this->user->id)->count();
+
+                if ($readingList) {
+                    $book->owners()->updateExistingPivot($this->user->id, [
+                        'status' => config('model.book.status.available'),
+                    ]);
+                    $book->users()->updateExistingPivot($userId, [
+                        'status' => config('model.book_user.status.waiting'),
+                    ]);
+                } else {
+                    throw new ActionException('data_invalid');
+                }
+            }
+        } else {
+            throw new ActionException('data_invalid');
         }
     }
 }

@@ -167,7 +167,7 @@ class BookController extends ApiController
             $book = $this->repository->findOrfail($bookId);
             $this->before('update', $book);
 
-            $this->repository->approve($book, $data['item']['user_id']);
+            $this->repository->approve($book, $data['item']);
         });
     }
 

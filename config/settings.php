@@ -48,5 +48,9 @@ return [
             'h' => 600,
             'fit' => 'crop',
         ]
-    ]
+    ],
+    'book_key' => [
+        'approve' => 'approve',
+        'unapprove' => 'unapprove',
+    ],
 ];
