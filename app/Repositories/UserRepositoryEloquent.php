@@ -125,6 +125,14 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 'usersReturning' => function($query) {
                     $query->select('id', 'name', 'avatar', 'position', 'email');
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                },
+                'usersReading' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                },
+                'usersReturned' => function($query) {
+                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->orderBy('book_user.created_at', 'ASC');
                 }
             ]))
             ->firstOrFail();
