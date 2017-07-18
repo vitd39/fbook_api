@@ -32,10 +32,10 @@ class AddAndEditFieldsToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('name')->nullable(false)->change();
-            $table->string('code')->nullable(false)->change();
-            $table->string('position')->nullable(false)->change();
-            $table->integer('office_id')->nullable(false)->change();
+            $table->string('name')->change();
+            $table->string('code')->change();
+            $table->string('position')->change();
+            $table->integer('office_id')->change();
             $table->dropColumn(['access_token', 'refresh_token', 'expires_in']);
         });
     }
