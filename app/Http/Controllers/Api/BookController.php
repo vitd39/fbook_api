@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\BookRepository;
 use App\Contracts\Repositories\CategoryRepository;
+use App\Contracts\Repositories\OfficeRepository;
 use App\Exceptions\Api\NotFoundException;
 use App\Http\Requests\Api\Book\ApproveRequest;
 use App\Http\Requests\Api\Book\BookFilteredByCategoryRequest;
@@ -312,5 +313,44 @@ class BookController extends ApiController
 
             $this->compacts['item'] = $this->repository->uploadMedia($book, $data, $mediaRepository);
         }, __FUNCTION__);
+    }
+
+    public function office($officeId, OfficeRepository $officeRepository)
+    {
+        $office = $officeRepository->find($officeId);
+
+        if (!$office) {
+            throw new NotFoundException;
+        }
+
+        $relations = [
+            'owners' => function ($q) {
+                $q->select($this->ownerSelect);
+            },
+            'image' => function ($q) {
+                $q->select($this->imageSelect);
+            },
+            'category' => function ($q) {
+                $q->select($this->categorySelect);
+            }
+        ];
+
+        return $this->getData(function() use ($relations, $office) {
+            $bookOffice = $this->repository->getBookByOffice($office->id, $this->select, $relations);
+            $currentPage = $bookOffice->currentPage();
+
+            $this->compacts['item'] = [
+                'total' => $bookOffice->total(),
+                'per_page' => $bookOffice->perPage(),
+                'current_page' => $currentPage,
+                'next_page' => ($bookOffice->lastPage() > $currentPage) ? $currentPage + 1 : null,
+                'prev_page' => $currentPage - 1 ?: null,
+                'office' => [
+                    'id' => $office->id,
+                    'name' => $office->name,
+                    'data' => $bookOffice->items(),
+                ]
+            ];
+        });
     }
 }

@@ -989,4 +989,43 @@ class BookTest extends TestCase
             ]
         ])->assertStatus(400);
     }
+
+    /* TEST GET BOOK BY OFFICE */
+
+    public function testGetBooksByOfficeSuccess()
+    {
+        $officeId = factory(Office::class)->create()->id;
+        $response = $this->call('GET', route('api.v0.books.office', $officeId), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'item' => [
+                'total', 'per_page', 'current_page', 'next_page', 'prev_page', 'office'
+            ],
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetBooksByOfficeWithIdInvalid()
+    {
+        $response = $this->call('GET', route('api.v0.books.office', 0), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+                'description' => [translate('exception.not_found')]
+            ]
+        ])->assertStatus(404);
+    }
 }
