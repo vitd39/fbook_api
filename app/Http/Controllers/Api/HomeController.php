@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Contracts\Repositories\BookRepository;
 use App\Http\Requests\Api\HomeFilterRequest;
+use Illuminate\Http\Request;
 
 class HomeController extends ApiController
 {
@@ -53,8 +54,10 @@ class HomeController extends ApiController
         $this->bookRepository = $bookRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        $officeId = $request->get('office_id');
+
         $relations = [
             'image' => function ($q) {
                 $q->select($this->imageSelect);
@@ -64,14 +67,15 @@ class HomeController extends ApiController
             },
         ];
 
-        return $this->getData(function() use ($relations){
-            $this->compacts['items'] = $this->bookRepository->getDataInHomepage($relations, $this->bookSelect);
+        return $this->getData(function() use ($relations, $officeId){
+            $this->compacts['items'] = $this->bookRepository->getDataInHomepage($relations, $this->bookSelect, $officeId);
         });
     }
 
     public function filter(HomeFilterRequest $request)
     {
         $filters = $request->get('filters') ?: [];
+        $officeId = $request->get('office_id');
         $relations = [
             'image' => function ($q) {
                 $q->select($this->imageSelect);
@@ -87,9 +91,9 @@ class HomeController extends ApiController
             },
         ];
 
-        return $this->getData(function() use ($relations, $filters){
+        return $this->getData(function() use ($relations, $filters, $officeId){
             $this->compacts['items'] = $this->bookRepository->getDataFilterInHomepage(
-                $relations, $this->bookSelect, $filters
+                $relations, $this->bookSelect, $filters, $officeId
             );
         });
     }

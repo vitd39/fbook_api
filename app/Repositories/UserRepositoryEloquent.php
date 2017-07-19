@@ -41,13 +41,14 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         return $currentUser;
     }
 
-    public function getDataBookOfUser($id, $action, $select = ['*'], $with = [])
+    public function getDataBookOfUser($id, $action, $select = ['*'], $with = [], $officeId = '')
     {
         if (
             in_array($action, array_keys(config('model.book_user.status')))
             && in_array(config('model.book_user.status.' . $action), array_values(config('model.book_user.status')))
         ) {
             return $this->model()->findOrFail($id)->books()
+                ->getBookByOffice($officeId)
                 ->with($with)
                 ->wherePivot('status', config('model.book_user.status.' . $action))
                 ->paginate(config('paginate.default'), $select);
@@ -55,6 +56,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
         if ($action == config('model.user_sharing_book')) {
             return $this->model()->findOrFail($id)->owners()
+                ->getBookByOffice($officeId)
                 ->with(array_merge($with, [
                         'usersReading' => function($query) {
                             $query->select(array_merge($this->userSelect, ['owner_id']));
@@ -73,19 +75,21 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         ]);
     }
 
-    public function getInterestedBooks($dataSelect = ['*'], $with = [])
+    public function getInterestedBooks($dataSelect = ['*'], $with = [], $officeId = '')
     {
         if ($this->user->tags) {
             $tags = explode(',', $this->user->tags);
 
             return app(Book::class)
                 ->getLatestBooks($dataSelect, $with)
+                ->getBookByOffice($officeId)
                 ->whereIn('category_id', $tags)
                 ->paginate(config('paginate.default'));
         }
 
         return app(Book::class)
             ->getLatestBooks($dataSelect, $with)
+            ->getBookByOffice($officeId)
             ->paginate(config('paginate.default'));
     }
 
@@ -112,7 +116,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         return $books;
     }
 
-    public function getListWaitingApprove($dataSelect = ['*'], $with = [])
+    public function getListWaitingApprove($dataSelect = ['*'], $with = [], $officeId = '')
     {
         $books = $this->user->owners()
             ->select($dataSelect)
@@ -126,6 +130,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 }
             ]))
+            ->getBookByOffice($officeId)
             ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
 

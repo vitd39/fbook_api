@@ -7,17 +7,17 @@ use App\Contracts\Repositories\MediaRepository;
 
 interface BookRepository extends AbstractRepository
 {
-    public function getDataInHomepage($with = [], $dataSelect = ['*']);
+    public function getDataInHomepage($with = [], $dataSelect = ['*'], $officeId = '');
 
-    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = []);
+    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = [], $officeId = '');
 
-    public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*']);
+    public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*'], $officeId = '');
 
     public function booking(Book $book, array $data);
 
     public function review($bookId, array $data);
 
-    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = []);
+    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $filters = [], $officeId = '');
 
     public function show($id);
 
@@ -27,9 +27,9 @@ interface BookRepository extends AbstractRepository
 
     public function destroy(Book $book);
 
-    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = []);
+    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = [], $officeId = '');
 
-    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = []);
+    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = [], $officeId = '');
 
     public function increaseView(Book $book);
 
