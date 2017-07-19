@@ -7,6 +7,19 @@ use App\Eloquent\Book;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
+    protected $userSelect = [
+        'id',
+        'name',
+        'email',
+        'phone',
+        'code',
+        'position',
+        'role',
+        'office_id',
+        'avatar',
+        'tags',
+    ];
+
     public function model()
     {
         return new \App\Eloquent\User;
@@ -42,7 +55,13 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
         if ($action == config('model.user_sharing_book')) {
             return $this->model()->findOrFail($id)->owners()
-                ->with($with)
+                ->with(array_merge($with, [
+                        'usersReading' => function($query) {
+                            $query->select(array_merge($this->userSelect, ['owner_id']));
+                            $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                        }
+                    ])
+                )
                 ->paginate(config('paginate.default'), $select);
         }
     }
