@@ -38,4 +38,6 @@ interface BookRepository extends AbstractRepository
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository);
 
     public function approve(Book $book, $attribute = []);
+
+    public function getBookByOffice($categoryId, $dataSelect = ['*'], $with = []);
 }

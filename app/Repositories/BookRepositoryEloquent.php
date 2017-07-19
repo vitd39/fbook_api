@@ -587,4 +587,9 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             throw new ActionException('data_invalid');
         }
     }
+
+    public function getBookByOffice($officeId, $dataSelect = ['*'], $with = [])
+    {
+        return $this->select($dataSelect)->with($with)->where('office_id', $officeId)->paginate(config('paginate.default'));
+    }
 }

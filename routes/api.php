@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
     Route::get('books/{id}/increase-view', ['as' => 'books.increaseView', 'uses' => 'BookController@increaseView']);
     Route::post('books/filters', ['as' => 'books.filters', 'uses' => 'BookController@filter']);
     Route::get('books/category/{category_id}', ['as' => 'books.category', 'uses' => 'BookController@category']);
+    Route::get('books/office/{office_id}', ['as' => 'books.office', 'uses' => 'BookController@office']);
     Route::post('books/category/{category_id}/filter', ['as' => 'books.category.filter', 'uses' => 'BookController@filterCategory']);
     Route::post('search', ['as' => 'search', 'uses' => 'BookController@search']);
     Route::resource('categories', 'CategoryController', [
