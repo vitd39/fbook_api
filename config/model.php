@@ -74,6 +74,7 @@ return [
         'video' => 1,
     ],
     'user_sharing_book' => 'sharing',
+    'user_reviewed_book' => 'reviewed',
     'media' => [
         'type' => [
             'avatar_book' => 1,

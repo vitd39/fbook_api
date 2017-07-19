@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function reviews()
     {
-        return $this->belongsToMany(Book::class)->withPivot('content', 'star');
+        return $this->belongsToMany(Book::class, 'reviews')->withPivot('content', 'star');
     }
 
     public function suggestions()
