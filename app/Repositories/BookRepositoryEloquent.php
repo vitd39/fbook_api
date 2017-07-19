@@ -405,16 +405,46 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $this->model()->whereCode($code)->first();
     }
 
-    public function store(array $attributes, MediaRepository $mediaRepository)
+    /**
+     * Add owner book in owners table
+     *
+     * @param App\Eloquent\Book $book
+     * @return void
+     */
+    private function addOwnerBook(Book $book)
     {
-        $dataBook = array_only($attributes, $this->model()->getFillable());
-        $dataBook['code'] = sha1(time());
-        $book = $this->model()->create($dataBook);
-
+        $book->owners()->detach($this->user->id);
         $book->owners()->attach($this->user->id, [
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
+    }
+
+    public function store(array $attributes, MediaRepository $mediaRepository)
+    {
+        if (!isset($attributes['medias'])) {
+            $dataCompareBook = array_only($attributes, [
+                'title',
+                'description',
+                'author',
+                'publish_date',
+                'category_id',
+                'office_id',
+            ]);
+            $bookExistedInDatabase = $this->model()->where($dataCompareBook)->first();
+
+            if (count($bookExistedInDatabase)) {
+                $this->addOwnerBook($bookExistedInDatabase);
+
+                return $bookExistedInDatabase->load('category', 'office', 'media');
+            }
+        }
+
+        $dataBook = array_only($attributes, $this->model()->getFillable());
+        $dataBook['code'] = sha1(time());
+        $book = $this->model()->create($dataBook);
+
+        $this->addOwnerBook($book);
 
         if (isset($attributes['medias'])) {
             $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
