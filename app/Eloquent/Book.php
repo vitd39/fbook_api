@@ -91,9 +91,9 @@ class Book extends Model
         return $this->morphOne(Media::class, 'target')->where('type', config('model.media.type.avatar_book'));
     }
 
-    public function scopeGetData($query, $field, $filters = [], $orderBy = 'DESC')
+    public function scopeGetData($query, $field, $filters = [], $orderBy = 'DESC', $officeId = '')
     {
-        return $query->where(function ($query) use ($field, $filters) {
+        return $query->where(function ($query) use ($field, $filters, $officeId) {
             if ($field == config('model.filter_books.view.field')) {
                 $query->where(config('model.filter_books.view.field'), '>', 0);
             }
@@ -136,5 +136,12 @@ class Book extends Model
     public function scopeGetLatestBooks($query, $dataSelect, $with)
     {
        return $query->select($dataSelect)->with($with)->orderBy('created_at','desc');
+    }
+
+    public function scopeGetBookByOffice($query, $officeId)
+    {
+        if ($officeId) {
+            return $query->where('office_id', $officeId);
+        }
     }
 }

@@ -37,7 +37,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return new \App\Eloquent\Book;
     }
 
-    public function getDataInHomepage($with = [], $dataSelect = ['*'])
+    public function getDataInHomepage($with = [], $dataSelect = ['*'], $officeId = '')
     {
         $limit = config('paginate.book_home_limit');
 
@@ -45,32 +45,32 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             [
                 'key' => config('model.filter_books.latest.key'),
                 'title' => config('model.filter_books.latest.title'),
-                'data' => $this->getLatestBooks($with, $dataSelect, $limit)->items(),
+                'data' => $this->getLatestBooks($with, $dataSelect, $limit, [], $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.view.key'),
                 'title' => config('model.filter_books.view.title'),
-                'data' => $this->getBooksByCountView($with, $dataSelect, $limit)->items(),
+                'data' => $this->getBooksByCountView($with, $dataSelect, $limit, [], $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.rating.key'),
                 'title' => config('model.filter_books.rating.title'),
-                'data' => $this->getBooksByRating($with, $dataSelect, $limit)->items(),
+                'data' => $this->getBooksByRating($with, $dataSelect, $limit, [], $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.waiting.key'),
                 'title' => config('model.filter_books.waiting.title'),
-                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit)->items(),
+                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, [], $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.read.key'),
                 'title' => config('model.filter_books.read.title'),
-                'data' => $this->getBooksByRead($with, $dataSelect, $limit)->items(),
+                'data' => $this->getBooksByRead($with, $dataSelect, $limit, [], $officeId)->items(),
             ],
         ];
     }
 
-    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $attribute = [])
+    public function getDataFilterInHomepage($with = [], $dataSelect = ['*'], $attribute = [], $officeId = '')
     {
         $limit = config('paginate.book_home_limit');
 
@@ -78,39 +78,39 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             [
                 'key' => config('model.filter_books.latest.key'),
                 'title' => config('model.filter_books.latest.title'),
-                'data' => $this->getLatestBooks($with, $dataSelect, $limit, $attribute)->items(),
+                'data' => $this->getLatestBooks($with, $dataSelect, $limit, $attribute, $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.view.key'),
                 'title' => config('model.filter_books.view.title'),
-                'data' => $this->getBooksByCountView($with, $dataSelect, $limit, $attribute)->items(),
+                'data' => $this->getBooksByCountView($with, $dataSelect, $limit, $attribute, $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.rating.key'),
                 'title' => config('model.filter_books.rating.title'),
-                'data' => $this->getBooksByRating($with, $dataSelect, $limit, $attribute)->items(),
+                'data' => $this->getBooksByRating($with, $dataSelect, $limit, $attribute, $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.waiting.key'),
                 'title' => config('model.filter_books.waiting.title'),
-                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, $attribute)->items(),
+                'data' => $this->getBooksByWaiting($with, $dataSelect, $limit, $attribute, $officeId)->items(),
             ],
             [
                 'key' => config('model.filter_books.read.key'),
                 'title' => config('model.filter_books.read.title'),
-                'data' => $this->getBooksByRead($with, $dataSelect, $limit, $attribute)->items(),
+                'data' => $this->getBooksByRead($with, $dataSelect, $limit, $attribute, $officeId)->items(),
             ],
         ];
     }
 
-    public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*'])
+    public function getDataSearch(array $attribute, $with = [], $dataSelect = ['*'], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
         return $this->model()
             ->select($dataSelect)
             ->with($with)
-            ->where(function ($query) use ($attribute) {
+            ->where(function ($query) use ($attribute, $officeId) {
                 if (isset($attribute['conditions']) && $attribute['conditions']) {
                     foreach ($attribute['conditions'] as $conditions) {
                         foreach ($conditions as $type => $typeIds) {
@@ -132,11 +132,12 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     });
                 }
             })
+            ->getBookByOffice($officeId)
             ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate(config('paginate.default'));
     }
 
-    protected function getLatestBooks($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getLatestBooks($with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
@@ -144,11 +145,12 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->select($dataSelect)
             ->with($with)
             ->getData(config('model.filter_books.latest.field'), $input['filters'])
+            ->getBookByOffice($officeId)
             ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByCountView($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByCountView($with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
@@ -156,11 +158,12 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->select($dataSelect)
             ->with($with)
             ->getData(config('model.filter_books.view.field'), $input['filters'])
+            ->getBookByOffice($officeId)
             ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByRating($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByRating($with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
@@ -168,11 +171,12 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->select($dataSelect)
             ->with($with)
             ->getData(config('model.filter_books.view.field'), $input['filters'])
+            ->getBookByOffice($officeId)
             ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
     }
 
-    protected function getBooksByBookUserStatus($status, $with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByBookUserStatus($status, $with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
@@ -190,6 +194,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->with($with)
             ->whereIn('id', $numberOfUserWaitingBook->pluck('book_id')->toArray())
             ->getData($input['sort']['field'], $input['filters'], $input['sort']['type'])
+            ->getBookByOffice($officeId)
             ->paginate($limit ?: config('paginate.default'));
 
         foreach ($books->items() as $book) {
@@ -199,37 +204,37 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $books;
     }
 
-    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByWaiting($with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         return $this->getBooksByBookUserStatus(
-            config('model.book_user.status.waiting'), $with, $dataSelect, $limit, $attribute
+            config('model.book_user.status.waiting'), $with, $dataSelect, $limit, $attribute, $officeId
         );
     }
 
-    protected function getBooksByRead($with = [], $dataSelect = ['*'], $limit = '', $attribute = [])
+    protected function getBooksByRead($with = [], $dataSelect = ['*'], $limit = '', $attribute = [], $officeId = '')
     {
         return $this->getBooksByBookUserStatus(
-            config('model.book_user.status.returned'), $with, $dataSelect, $limit, $attribute
+            config('model.book_user.status.returned'), $with, $dataSelect, $limit, $attribute, $officeId
         );
     }
 
-    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = [])
+    public function getBooksByFields($with = [], $dataSelect = ['*'], $field, $attribute = [], $officeId = '')
     {
         switch ($field) {
             case config('model.filter_books.view.key'):
-                return $this->getBooksByCountView($with, $dataSelect,'', $attribute);
+                return $this->getBooksByCountView($with, $dataSelect,'', $attribute, $officeId);
 
             case config('model.filter_books.latest.key'):
-                return $this->getLatestBooks($with, $dataSelect, '', $attribute);
+                return $this->getLatestBooks($with, $dataSelect, '', $attribute, $officeId);
 
             case config('model.filter_books.rating.key'):
-                return $this->getBooksByRating($with, $dataSelect, '', $attribute);
+                return $this->getBooksByRating($with, $dataSelect, '', $attribute, $officeId);
 
             case config('model.filter_books.waiting.key'):
-                return $this->getBooksByWaiting($with, $dataSelect, '', $attribute);
+                return $this->getBooksByWaiting($with, $dataSelect, '', $attribute, $officeId);
 
             case config('model.filter_books.read.key'):
-                return $this->getBooksByRead($with, $dataSelect, '', $attribute);
+                return $this->getBooksByRead($with, $dataSelect, '', $attribute, $officeId);
         }
     }
 
@@ -408,7 +413,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     /**
      * Add owner book in owners table
      *
-     * @param App\Eloquent\Book $book
+     * @param \App\Eloquent\Book $book
      * @return void
      */
     private function addOwnerBook(Book $book)
@@ -481,12 +486,15 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         $book->delete();
     }
 
-    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = [])
+    public function getBookByCategory($categoryId, $dataSelect = ['*'], $with = [], $officeId = '')
     {
-        return $this->select($dataSelect)->with($with)->where('category_id', $categoryId)->paginate(config('paginate.default'));
+        return $this->select($dataSelect)->with($with)
+            ->getBookByOffice($officeId)
+            ->where('category_id', $categoryId)
+            ->paginate(config('paginate.default'));
     }
 
-    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = [])
+    public function getBookFilteredByCategory($categoryId, $attribute = [], $dataSelect = ['*'], $with = [], $officeId = '')
     {
         $input = $this->getDataInput($attribute);
 
@@ -495,6 +503,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ->with($with)
             ->where('category_id', $categoryId)
             ->getData($input['sort']['field'], $input['filters'], $input['sort']['type'])
+            ->getBookByOffice($officeId)
             ->paginate(config('paginate.default'));
     }
 
