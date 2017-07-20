@@ -309,6 +309,16 @@ class BookController extends ApiController
         });
     }
 
+    public function removeOwner($id)
+    {
+        return $this->doAction(function() use ($id) {
+            $book = $this->repository->findOrFail($id);
+            $this->before('delete', $book);
+
+            $this->repository->removeOwner($book);
+        });
+    }
+
     public function uploadMedia(UploadMediaRequest $request, MediaRepository $mediaRepository)
     {
         $data = $request->all();

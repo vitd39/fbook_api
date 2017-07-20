@@ -522,6 +522,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         }
     }
 
+    public function removeOwner(Book $book)
+    {
+        $book->users()->wherePivot('owner_id', $this->user->id)->detach();
+
+        $book->owners()->detach($this->user->id);
+    }
+
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository)
     {
         $this->uploadAndSaveMediasForBook($attributes['medias'], $book, $mediaRepository);
