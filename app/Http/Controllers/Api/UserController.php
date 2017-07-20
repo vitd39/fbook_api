@@ -9,7 +9,7 @@ use App\Http\Requests\Api\User\AddTagsRequest;
 class UserController extends ApiController
 {
     protected $bookSelect = [
-        'id',
+        'books.id',
         'title',
         'description',
         'author',
@@ -80,6 +80,7 @@ class UserController extends ApiController
         if (
             !in_array($action, array_keys(config('model.book_user.status')))
             && $action != config('model.user_sharing_book')
+            && $action != config('model.user_reviewed_book')
         ) {
             throw new ActionException;
         }

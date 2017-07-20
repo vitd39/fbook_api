@@ -8,7 +8,7 @@ use App\Eloquent\Book;
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
     protected $userSelect = [
-        'id',
+        'users.id',
         'name',
         'email',
         'phone',
@@ -62,6 +62,12 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                         }
                     ])
                 )
+                ->paginate(config('paginate.default'), $select);
+        }
+
+        if ($action == config('model.user_reviewed_book')) {
+            return $this->model()->findOrFail($id)->reviews()
+                ->with($with)
                 ->paginate(config('paginate.default'), $select);
         }
     }
