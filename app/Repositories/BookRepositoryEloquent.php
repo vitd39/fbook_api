@@ -408,7 +408,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     /**
      * Add owner book in owners table
      *
-     * @param App\Eloquent\Book $book
+     * @param \App\Eloquent\Book $book
      * @return void
      */
     private function addOwnerBook(Book $book)
@@ -511,6 +511,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         } else {
             throw new ActionException('ownered_current_book');
         }
+    }
+
+    public function removeOwner(Book $book)
+    {
+        $book->users()->wherePivot('owner_id', $this->user->id)->detach();
+
+        $book->owners()->detach($this->user->id);
     }
 
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository)

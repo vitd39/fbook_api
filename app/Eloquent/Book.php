@@ -22,12 +22,11 @@ class Book extends Model
         'code',
         'count_view',
         'status',
-        'owner_id',
         'category_id',
         'office_id',
     ];
 
-    protected $hidden = ['owner_id', 'category_id', 'office_id'];
+    protected $hidden = ['category_id', 'office_id'];
 
     protected $appends = ['overview'];
 
