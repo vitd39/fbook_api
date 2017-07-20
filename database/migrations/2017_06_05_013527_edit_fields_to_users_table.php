@@ -27,7 +27,7 @@ class EditFieldsToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('password')->nullable(false)->change();
+            $table->string('password')->change();
             $table->string('access_token', 100)->nullable();
             $table->string('refresh_token', 100)->nullable();
             $table->string('expires_in')->nullable();
