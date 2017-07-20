@@ -813,21 +813,22 @@ class BookTest extends TestCase
 
     /* TEST REMOVE OWNER BOOK*/
 
-    public function testRemoveOwnerBookSuccess()
+    public function testRemoveOwnerBookNotOwner()
     {
         $bookId = factory(Book::class)->create()->id;
         $response = $this->call('GET', route('api.v0.books.remove-owner', $bookId), [], [], [], $this->getFauthHeaders());
 
         $response->assertJsonStructure([
             'message' => [
-                'status', 'code',
+                'status', 'code', 'description'
             ],
         ])->assertJson([
             'message' => [
-                'status' => true,
-                'code' => 200,
+                'status' => false,
+                'code' => 400,
+                'description' => [translate('exception.not_owner')]
             ]
-        ])->assertStatus(200);
+        ])->assertStatus(400);
     }
 
     public function testRemoveOwnerBookIdInvalid()
@@ -845,6 +846,23 @@ class BookTest extends TestCase
                 'description' => [translate('exception.not_found')]
             ]
         ])->assertStatus(404);
+    }
+
+    public function testRemoveOwnerBookWithGuest()
+    {
+        $bookId = factory(Book::class)->create()->id;
+        $response = $this->call('GET', route('api.v0.books.remove-owner', $bookId), [], [], [], $this->getHeaders());
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401
+            ]
+        ])->assertStatus(401);
     }
 
     /* TEST GET BOOK FILTERED BY CATEGORY */

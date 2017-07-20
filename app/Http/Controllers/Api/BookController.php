@@ -87,7 +87,7 @@ class BookController extends ApiController
         ];
 
         return $this->getData(function() use ($relations, $field, $officeId) {
-            $data = $this->repository->getBooksByFields($relations, $this->select, $field, $officeId);
+            $data = $this->repository->getBooksByFields($relations, $this->select, $field, [], $officeId);
 
             $this->compacts['item'] = $this->reFormatPaginate($data);
         });
