@@ -78,4 +78,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserFollow::class, 'id', 'follower_id');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * Check book is ownered by current user
+     *
+     * @param integer $bookId
+     * @return boolean
+     */
+    public function isOwnerBook($bookId)
+    {
+        return $this->owners()->where('book_id', $bookId)->count() !== 0;
+    }
 }

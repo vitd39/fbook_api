@@ -81,4 +81,12 @@ return [
             'not_avatar_book' => 0
         ],
     ],
+    'notification' => [
+        'approve_waiting' => 'approve_waiting',
+        'unapprove_waiting' => 'unapprove_waiting',
+        'approve_returning' => 'approve_returning',
+        'add_owner' => 'add_owner',
+        'remove_owner' => 'remove_owner',
+        'review' => 'review',
+    ]
 ];
