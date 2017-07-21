@@ -303,6 +303,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     'star' => $dataReview['star'],
                 ]
             ]);
+
+            if (!$this->user->isOwnerBook($book->id)) {
+                Event::fire('notification', [
+                    [
+                        'current_user_id' => $this->user->id,
+                        'target_id' => $book->id,
+                        'type' => config('model.notification.review'),
+                    ]
+                ]);
+            }
         }
     }
 
@@ -520,13 +530,32 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         } else {
             throw new ActionException('ownered_current_book');
         }
+
+        if (!$this->user->isOwnerBook($book->id)) {
+            Event::fire('notification', [
+                [
+                    'current_user_id' => $this->user->id,
+                    'target_id' => $book->id,
+                    'type' => config('model.notification.add_owner'),
+                ]
+            ]);
+        }
     }
 
     public function removeOwner(Book $book)
     {
         $book->users()->wherePivot('owner_id', $this->user->id)->detach();
-
         $book->owners()->detach($this->user->id);
+
+        if (!$this->user->isOwnerBook($book->id)) {
+            Event::fire('notification', [
+                [
+                    'current_user_id' => $this->user->id,
+                    'target_id' => $book->id,
+                    'type' => config('model.notification.remove_owner'),
+                ]
+            ]);
+        }
     }
 
     public function uploadMedia(Book $book, $attributes = [], MediaRepository $mediaRepository)
@@ -554,6 +583,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->users()->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.reading'),
                     ]);
+
+                    if (!$this->user->isOwnerBook($book->id)) {
+                        Event::fire('notification', [
+                            [
+                                'current_user_id' => $this->user->id,
+                                'target_id' => $book->id,
+                                'type' => config('model.notification.approve_waiting'),
+                            ]
+                        ]);
+                    }
                 } else {
                     throw new ActionException('not_in_waiting_list');
                 }
@@ -567,6 +606,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->users()->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.returned'),
                     ]);
+
+                    if (!$this->user->isOwnerBook($book->id)) {
+                        Event::fire('notification', [
+                            [
+                                'current_user_id' => $this->user->id,
+                                'target_id' => $book->id,
+                                'type' => config('model.notification.approve_returning'),
+                            ]
+                        ]);
+                    }
                 } else {
                     throw new ActionException('data_invalid');
                 }
@@ -582,6 +631,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->users()->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.returning'),
                     ]);
+
+                    if (!$this->user->isOwnerBook($book->id)) {
+                        Event::fire('notification', [
+                            [
+                                'current_user_id' => $this->user->id,
+                                'target_id' => $book->id,
+                                'type' => config('model.notification.unapprove_waiting'),
+                            ]
+                        ]);
+                    }
                 } else {
                     throw new ActionException('data_invalid');
                 }
