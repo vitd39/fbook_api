@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Contracts\Repositories\UserRepository;
 use App\Exceptions\Api\ActionException;
 use App\Http\Requests\Api\User\AddTagsRequest;
+use App\Http\Requests\Api\Follow\FollowRequest;
 
 class UserController extends ApiController
 {
@@ -146,6 +147,22 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['items'] = $this->repository->getNotifications();
+        });
+    }
+
+    public function followOrUnfollow(FollowRequest $request)
+    {
+        $data = $request->all();
+
+        return $this->requestAction(function () use ($data) {
+            $this->repository->followOrUnfollow($data['item']['user_id']);
+        });
+    }
+
+    public function getFollowInfo($id)
+    {
+        return $this->requestAction(function() use ($id) {
+            $this->compacts['items'] = $this->repository->getFollowInfo($id);
         });
     }
 }

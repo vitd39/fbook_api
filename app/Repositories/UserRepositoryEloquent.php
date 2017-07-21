@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\UserRepository;
+use App\Exceptions\Api\ActionException;
 use App\Eloquent\Book;
+use App\Eloquent\UserFollow;
 use App\Eloquent\Notification;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
@@ -182,5 +184,44 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ])
             ->whereIn('target_id', $owneredBookId)
             ->paginate(config('paginate.default'));
+    }
+
+    public function followOrUnfollow($userId)
+    {
+        if ($this->user->id === $userId) {
+            throw new ActionException('can_not_follow_yourself');
+        }
+        $follow = app(UserFollow::class)->where('following_id', $userId)
+            ->where('follower_id', $this->user->id)
+            ->first();
+        if ($follow) {
+            $follow->delete();
+        } else {
+            app(UserFollow::class)->create([
+                'following_id' => $userId,
+                'follower_id' => $this->user->id,
+            ]);
+        }
+    }
+
+    public function getFollowInfo($id, $dataSelect = ['*'], $with = [])
+    {
+        $follower_id = $this->model()->findOrFail($id)->usersFollowing->pluck('follower_id');
+        $following_id = $this->model()->findOrFail($id)->usersFollower->pluck('following_id');
+        $followedBy = $this->model()->select('id', 'name')->whereIn('id', $follower_id)->orderBy('name')->get();
+        $following = $this->model()->select('id', 'name')->whereIn('id', $following_id)->orderBy('name')->get();
+        $countFollowed = $followedBy->count();
+        $countFollowing = $following->count();
+        $isFollow = app(UserFollow::class)
+            ->where('following_id', $id)
+            ->where('follower_id', $this->user->id)
+            ->first();
+        if (!$isFollow) {
+            $isFollow = false;
+        } else {
+            $isFollow = true;
+        }
+
+        return compact('followedBy', 'following', 'isFollow', 'countFollowed', 'countFollowing');
     }
 }

@@ -19,4 +19,10 @@ interface UserRepository extends AbstractRepository
     public function getListWaitingApprove($dataSelect = ['*'], $with = [], $officeId = '');
 
     public function getBookApproveDetail($bookId, $dataSelect = ['*'], $with = []);
+
+    public function getNotifications();
+
+    public function followOrUnfollow($userId);
+
+    public function getFollowInfo($id);
 }

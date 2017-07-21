@@ -20,6 +20,7 @@
     "ownered_current_book": "You ownered this book",
     "not_in_waiting_list": "User haven't in waiting list",
     "other_user_reading_book": "Other user reading this book",
+    "can_not_follow_yourself": "Can not follow yourself",
     "data_invalid": "Data invalid"
   },
   "http_message": {
