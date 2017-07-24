@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Contracts\Repositories\UserRepository;
 use App\Eloquent\Book;
+use App\Eloquent\Notification;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
@@ -166,5 +167,20 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 }
             ]))
             ->firstOrFail();
+    }
+
+    public function getNotifications()
+    {
+        $owneredBookId = $this->user->owners->pluck('id')->toArray();
+
+        return app(Notification::class)
+            ->with([
+                'book',
+                'user' => function($query) {
+                    $query->select($this->userSelect);
+                }
+            ])
+            ->whereIn('target_id', $owneredBookId)
+            ->paginate(config('paginate.default'));
     }
 }

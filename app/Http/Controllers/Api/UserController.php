@@ -141,4 +141,11 @@ class UserController extends ApiController
             $this->compacts['item'] = $this->repository->getBookApproveDetail($bookId, $this->bookSelect, $this->relations);
         });
     }
+
+    public function getNotifications()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['items'] = $this->repository->getNotifications();
+        });
+    }
 }

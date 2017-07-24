@@ -373,4 +373,42 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(500);
     }
+
+    /* TEST GET NOTIFICATIONS OF CURRENT USER */
+
+    public function testGetNotificationsOfCurrentUserWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.notifications'), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testGetNotificationsOfCurrentUserSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.notifications'), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
 }
