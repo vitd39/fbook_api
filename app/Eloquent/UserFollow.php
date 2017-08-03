@@ -13,13 +13,13 @@ class UserFollow extends Model
         'follower_id',
     ];
 
-    public function userFlower()
+    public function userFollower()
     {
-        return $this->belongsTo(User::class, 'folower_id');
+        return $this->belongsTo(User::class, 'follower_id');
     }
 
-    public function userFlowing()
+    public function userFollowing()
     {
-        return $this->belongsTo(User::class, 'folowing_id');
+        return $this->belongsTo(User::class, 'following_id');
     }
 }

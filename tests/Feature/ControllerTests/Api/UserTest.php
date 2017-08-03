@@ -411,4 +411,96 @@ class UserTest extends TestCase
             ]
         ])->assertStatus(200);
     }
+
+    public function testFollowUnfollowSuccess()
+    {
+        $headers = $this->getFauthHeaders();
+        $data['user_id'] = $this->createUser()->id;
+
+        $response = $this->call('POST', route('api.v0.users.follow'), ['item' => $data], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testFollowUnfollowWithGuest()
+    {
+        $headers = $this->getHeaders();
+
+        $response = $this->call('POST', route('api.v0.users.follow'), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testGetFollowInfoOfUserSuccsess()
+    {
+        $headers = $this->getFauthHeaders();
+        $userId = $this->createUser()->id;
+
+        $response = $this->call('GET', route('api.v0.users.follow.info', $userId), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code',
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => true,
+                'code' => 200,
+            ]
+        ])->assertStatus(200);
+    }
+
+    public function testGetFollowInfoOfUserWithGuest()
+    {
+        $headers = $this->getHeaders();
+        $userId = $this->createUser()->id;
+
+        $response = $this->call('GET', route('api.v0.users.follow.info', $userId), [], [], [], $headers);
+
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 401,
+            ]
+        ])->assertStatus(401);
+    }
+
+    public function testGetFollowInfoOfUserWithInvalidUserId()
+    {
+        $headers = $this->getFauthHeaders();
+
+        $response = $this->call('GET', route('api.v0.users.follow.info', 'xxx'), [], [], [], $headers);
+        $response->assertJsonStructure([
+            'message' => [
+                'status', 'code', 'description'
+            ],
+        ])->assertJson([
+            'message' => [
+                'status' => false,
+                'code' => 404,
+            ]
+        ])->assertStatus(404);
+    }
 }
