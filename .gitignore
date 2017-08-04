@@ -1,6 +1,7 @@
 /node_modules
 /public/storage
 /public/assets/*.json
+/storage/*
 /storage/files
 /storage/debugbar
 /storage/oauth-private.key
@@ -11,4 +12,5 @@
 Homestead.json
 Homestead.yaml
 .env
-/storage/*
+composer.lock
+package-lock.json
