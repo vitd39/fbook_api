@@ -37,6 +37,7 @@ return [
     'framgia' => [
         'client_id' => env('FRAMGIA_CLIENT_ID'),
         'client_secret' => env('FRAMGIA_CLIENT_SECRET'),
+        'base_url' => env('FRAMGIA_CLIENT_BASE_URL'),
         'redirect' => env('APP_URL') . '/callback/framgia',
     ],
 

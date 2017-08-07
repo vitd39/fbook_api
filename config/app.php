@@ -168,7 +168,7 @@ return [
          */
         Laravel\Tinker\TinkerServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
-        Trandinhvi39\Fauth\FAuthServiceProvider::class,
+        Framgia\Fauth\FAuthServiceProvider::class,
         Barryvdh\Cors\ServiceProvider::class,
 
         /*
@@ -231,7 +231,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
-        'Fauth' => Trandinhvi39\Fauth\Facades\Fauth::class,
+        'Fauth' => Framgia\Fauth\Facades\Fauth::class,
 
     ],
 
