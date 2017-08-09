@@ -131,11 +131,13 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->select($dataSelect)
             ->with(array_merge($with, [
                 'usersWaiting' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->select('id', 'name', 'avatar', 'position')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
                 'usersReturning' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position');
+                    $query->select('id', 'name', 'avatar', 'position')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 }
             ]))
@@ -152,19 +154,23 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->select($dataSelect)
             ->with(array_merge($with, [
                 'usersWaiting' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->select('id', 'name', 'avatar', 'position', 'email')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC');
                 },
                 'usersReturning' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->select('id', 'name', 'avatar', 'position', 'email')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 },
                 'usersReading' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->select('id', 'name', 'avatar', 'position', 'email')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                 },
                 'usersReturned' => function($query) {
-                    $query->select('id', 'name', 'avatar', 'position', 'email');
+                    $query->select('id', 'name', 'avatar', 'position', 'email')
+                        ->where('book_user.owner_id', $this->user->id);
                     $query->orderBy('book_user.created_at', 'ASC');
                 }
             ]))
