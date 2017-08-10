@@ -242,12 +242,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
     {
         $ownerId = $attributes['item']['owner_id'];
 
-        if ($ownerId === $this->user->id) {
+        if ($ownerId == $this->user->id) {
             throw new ActionException('not_booking_book_owned');
         }
-
-        $checkUser = $book->users()->where(['user_id' => $this->user->id, 'owner_id' => $ownerId])->first();
-
+        $checkUser = $book->users()->wherePivot('user_id', $this->user->id)->wherePivot('owner_id', $ownerId)->orderBy('book_user.created_at', 'desc')->first();
         if ($checkUser) {
             if (
                 $checkUser->pivot->status == config('model.book_user.status.reading')
@@ -256,14 +254,19 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     || $attributes['item']['status'] == config('model.book_user.status.returned')
                 )
             ) {
-                $book->users()->updateExistingPivot($this->user->id, [
-                    'status' => config('model.book_user.status.returning'),
-                ]);
+                $book->users()
+                    ->wherePivot('owner_id', $ownerId)
+                    ->wherePivot('status', config('model.book_user.status.reading'))
+                    ->updateExistingPivot($this->user->id, [
+                        'status' => config('model.book_user.status.returning'),
+                    ]);
             } elseif (
                 $checkUser->pivot->status == config('model.book_user.status.waiting')
                 && $attributes['item']['status'] == config('model.book_user_status_cancel')
             ) {
-                $book->users()->detach($this->user->id);
+                $book->users()
+                    ->wherePivot('status', config('model.book_user.status.waiting'))
+                    ->detach($this->user->id);
             } elseif (
                 $checkUser->pivot->status == config('model.book_user.status.returned')
                 && $attributes['item']['status'] == config('model.book_user.status.waiting')
@@ -580,9 +583,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->owners()->updateExistingPivot($this->user->id, [
                         'status' => config('model.book.status.unavailable'),
                     ]);
-                    $book->users()->updateExistingPivot($userId, [
-                        'status' => config('model.book_user.status.reading'),
-                    ]);
+                    $book->users()
+                        ->wherePivot('owner_id', $this->user->id)
+                        ->wherePivot('status', config('model.book_user.status.waiting'))
+                        ->updateExistingPivot($userId, [
+                            'status' => config('model.book_user.status.reading'),
+                        ]);
+                    $book->users()
+                        ->wherePivot('owner_id', '<>', $this->user->id)
+                        ->wherePivot('status', config('model.book_user.status.waiting'))
+                        ->detach($userId);
 
                     if (!$this->user->isOwnerBook($book->id)) {
                         Event::fire('notification', [
@@ -603,7 +613,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->owners()->updateExistingPivot($this->user->id, [
                         'status' => config('model.book.status.available'),
                     ]);
-                    $book->users()->updateExistingPivot($userId, [
+                    $book->users()
+                        ->wherePivot('owner_id', $this->user->id)
+                        ->wherePivot('status', config('model.book_user.status.returning'))
+                        ->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.returned'),
                     ]);
 
