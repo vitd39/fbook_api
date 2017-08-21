@@ -62,7 +62,8 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 ->getBookByOffice($officeId)
                 ->with(array_merge($with, [
                         'usersReading' => function($query) {
-                            $query->select(array_merge($this->userSelect, ['owner_id']));
+                            $query->select(array_merge($this->userSelect, ['owner_id']))
+                                ->where('book_user.owner_id', $this->user->id);
                             $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                         }
                     ])
