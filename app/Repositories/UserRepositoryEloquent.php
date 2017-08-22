@@ -7,6 +7,7 @@ use App\Exceptions\Api\ActionException;
 use App\Eloquent\Book;
 use App\Eloquent\UserFollow;
 use App\Eloquent\Notification;
+use Illuminate\Support\Facades\Event;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
@@ -180,16 +181,21 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
     public function getNotifications()
     {
-        $owneredBookId = $this->user->owners->pluck('id')->toArray();
-
         return app(Notification::class)
             ->with([
                 'book',
-                'user' => function($query) {
+                'userSend' => function($query) {
                     $query->select($this->userSelect);
                 }
             ])
-            ->whereIn('target_id', $owneredBookId)
+            ->where('user_receive_id', $this->user->id)
+            ->orWhereIn('user_send_id', function($query){
+                $query->select('following_id')
+                ->from('user_follow')
+                ->where('follower_id', $this->user->id)
+                ->get();
+            })
+            ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
     }
 
@@ -230,5 +236,10 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         }
 
         return compact('followedBy', 'following', 'isFollow', 'countFollowed', 'countFollowing');
+    }
+
+    public function updateViewNotifications($notificationId)
+    {
+        $update_view = app(Notification::class)->findOrFail($notificationId)->update(['viewed' => config('model.notification.viewed')   ]);
     }
 }

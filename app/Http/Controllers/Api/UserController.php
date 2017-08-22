@@ -165,4 +165,11 @@ class UserController extends ApiController
             $this->compacts['items'] = $this->repository->getFollowInfo($id);
         });
     }
+
+    public function updateViewNotifications($notificationId)
+    {
+        return $this->requestAction(function() use ($notificationId) {
+            $this->repository->updateViewNotifications($notificationId);
+        });
+    }
 }

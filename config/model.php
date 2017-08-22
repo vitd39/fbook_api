@@ -88,5 +88,13 @@ return [
         'add_owner' => 'add_owner',
         'remove_owner' => 'remove_owner',
         'review' => 'review',
+        'waiting' => 'waiting',
+        'cancle' =>' cancle',
+        'returning' => 'returning',
+        'returned' => 'returned',
+        'add_book'=> '0',
+        'remove_book'=> '0',
+        'viewed' => true,
+        'not_view' => false,
     ]
 ];
