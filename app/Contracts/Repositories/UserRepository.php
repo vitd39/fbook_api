@@ -25,4 +25,6 @@ interface UserRepository extends AbstractRepository
     public function followOrUnfollow($userId);
 
     public function getFollowInfo($id);
+
+    public function updateViewNotifications($notificationId);
 }
