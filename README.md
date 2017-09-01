@@ -26,7 +26,7 @@ Fbook - for sharing and discussing about book
 
 `php artisan passport:client --password`
 
-Config API_CLIENT_SECRET and API_CLIENT_id in .env 
+Config API_CLIENT_SECRET and API_CLIENT_id in .env
 
 ## Testing
 **Prepare database**

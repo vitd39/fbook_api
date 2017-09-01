@@ -259,11 +259,11 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
 
     public function updateViewNotifications($notificationId)
     {
-        $update_view = app(Notification::class)->findOrFail($notificationId)->update(['viewed' => config('model.notification.viewed')   ]);
+        $update_view = app(Notification::class)->findOrFail($notificationId)->update(['viewed' => config('model.notification.viewed')]);
     }
 
     public function countNotificationNotView(){
-        $countNoSeen = app(Notification::class)->where('user_receive_id', $this->user->id)->where('viewed', config('model.notification.not_view'))->get()->count();
+        $countNoSeen = app(Notification::class)->where('user_receive_id', $this->user->id)->where('viewed', config('model.notification.not_view'))->count();
         return ['count' => $countNoSeen];
     }
 }
