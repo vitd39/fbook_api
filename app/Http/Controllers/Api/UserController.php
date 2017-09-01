@@ -97,7 +97,6 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['item'] = $this->user;
-            // $this->compacts['test'] = $this->repository->countNotificationNotView();
         });
     }
 
