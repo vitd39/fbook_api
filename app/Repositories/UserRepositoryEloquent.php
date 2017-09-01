@@ -8,6 +8,7 @@ use App\Eloquent\Book;
 use App\Eloquent\UserFollow;
 use App\Eloquent\Notification;
 use Illuminate\Support\Facades\Event;
+use Carbon\Carbon;
 
 class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserRepository
 {
@@ -179,6 +180,25 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->firstOrFail();
     }
 
+    public function getNotificationsFollow()
+    {
+        return app(Notification::class)
+            ->with([
+                'book',
+                'userSend' => function($query) {
+                    $query->select($this->userSelect);
+                }
+            ])
+            ->orWhereIn('user_send_id', function($query){
+                $query->select('following_id')
+                ->from('user_follow')
+                ->where('follower_id', $this->user->id)
+                ->get();
+            })
+            ->orderBy('created_at', 'DESC')
+            ->paginate(config('paginate.default'));
+    }
+
     public function getNotifications()
     {
         return app(Notification::class)
@@ -189,14 +209,13 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 }
             ])
             ->where('user_receive_id', $this->user->id)
-            ->orWhereIn('user_send_id', function($query){
-                $query->select('following_id')
-                ->from('user_follow')
-                ->where('follower_id', $this->user->id)
-                ->get();
-            })
             ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
+    }
+
+    public function getTimeCurrent()
+    {
+        return date('Y-m-d H:i:s');
     }
 
     public function followOrUnfollow($userId)
@@ -241,5 +260,10 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     public function updateViewNotifications($notificationId)
     {
         $update_view = app(Notification::class)->findOrFail($notificationId)->update(['viewed' => config('model.notification.viewed')   ]);
+    }
+
+    public function countNotificationNotView(){
+        $countNoSeen = app(Notification::class)->where('user_receive_id', $this->user->id)->where('viewed', config('model.notification.not_view'))->get()->count();
+        return ['count' => $countNoSeen];
     }
 }

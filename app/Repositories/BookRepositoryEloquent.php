@@ -296,10 +296,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 ]);
                 Event::fire('notification', [
                     [
-                        'current_user_id' => $ownerId,
-                        'get_user_id' => $this->user->id,
+                        'current_user_id' => $this->user->id,
+                        'get_user_id' => $ownerId,
                         'target_id' => $attributes['item']['book_id'],
-                        'type' => config('model.notification.returned'),
+                        'type' => config('model.notification.waiting'),
                     ]
                 ]);
             }

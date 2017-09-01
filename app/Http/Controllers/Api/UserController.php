@@ -97,6 +97,7 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['item'] = $this->user;
+            // $this->compacts['test'] = $this->repository->countNotificationNotView();
         });
     }
 
@@ -147,6 +148,8 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['items'] = $this->repository->getNotifications();
+            $this->compacts['itemsFollow'] = $this->repository->getNotificationsFollow();
+            $this->compacts['timeCurrent'] = $this->repository->getTimeCurrent();
         });
     }
 
@@ -170,6 +173,13 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() use ($notificationId) {
             $this->repository->updateViewNotifications($notificationId);
+        });
+    }
+
+    public function getCountNotifications()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['item'] = $this->repository->countNotificationNotView();
         });
     }
 }

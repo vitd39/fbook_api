@@ -22,9 +22,15 @@ interface UserRepository extends AbstractRepository
 
     public function getNotifications();
 
+    public function getNotificationsFollow();
+
+    public function getTimeCurrent();
+
     public function followOrUnfollow($userId);
 
     public function getFollowInfo($id);
 
     public function updateViewNotifications($notificationId);
+
+    public function countNotificationNotView();
 }
