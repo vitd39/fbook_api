@@ -66,5 +66,6 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('users/follow', ['as' => 'users.follow', 'uses' => 'UserController@followOrUnfollow']);
         Route::get('users/follow/info/{user_id}', ['as' => 'users.follow.info', 'uses' => 'UserController@getFollowInfo']);
         Route::get('notification/update/{notification_id}', ['as' => 'notification.update', 'uses' => 'UserController@updateViewNotifications']);
+        Route::get('notifications/count/user', ['as' => 'notifications.count', 'uses' => 'UserController@getCountNotifications']);
     });
 });
