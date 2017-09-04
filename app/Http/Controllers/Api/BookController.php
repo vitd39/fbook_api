@@ -84,6 +84,9 @@ class BookController extends ApiController
             'image' => function ($q) {
                 $q->select($this->imageSelect);
             },
+            'office' => function ($q) {
+                $q->select($this->officeSelect);
+            }
         ];
 
         return $this->getData(function() use ($relations, $field, $officeId) {

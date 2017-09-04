@@ -113,7 +113,7 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['items'] = $this->reFormatPaginate(
-                $this->repository->getInterestedBooks($this->bookSelect, ['image'])
+                $this->repository->getInterestedBooks($this->bookSelect, $this->relations)
             );
         });
     }
@@ -148,7 +148,6 @@ class UserController extends ApiController
         return $this->requestAction(function() {
             $this->compacts['items'] = $this->repository->getNotifications();
             $this->compacts['itemsFollow'] = $this->repository->getNotificationsFollow();
-            $this->compacts['timeCurrent'] = $this->repository->getTimeCurrent();
         });
     }
 

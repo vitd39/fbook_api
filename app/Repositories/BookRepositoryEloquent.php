@@ -589,7 +589,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
 
     public function removeOwner(Book $book)
     {
-        $book->users()->wherePivot('owner_id', $this->user->id)->detach();
+        $book->users()
+            ->wherePivot('owner_id', $this->user->id)
+            ->wherePivot('status' , '<>', config('model.book_user.status.returned'))
+            ->detach();
         $book->owners()->detach($this->user->id);
 
         Event::fire('notification', [
