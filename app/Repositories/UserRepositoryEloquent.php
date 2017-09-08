@@ -67,6 +67,16 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                             $query->select(array_merge($this->userSelect, ['owner_id']))
                                 ->where('book_user.owner_id', $this->user->id);
                             $query->orderBy('book_user.created_at', 'ASC')->limit(1);
+                        },
+                        'usersWaiting' => function($query) {
+                            $query->select('id', 'name', 'avatar', 'position', 'email')
+                                ->where('book_user.owner_id', $this->user->id);
+                            $query->orderBy('book_user.created_at', 'ASC');
+                        },
+                        'usersReturning' => function($query) {
+                            $query->select('id', 'name', 'avatar', 'position', 'email')
+                                ->where('book_user.owner_id', $this->user->id);
+                            $query->orderBy('book_user.created_at', 'ASC')->limit(1);
                         }
                     ])
                 )
@@ -211,11 +221,6 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->where('user_receive_id', $this->user->id)
             ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
-    }
-
-    public function getTimeCurrent()
-    {
-        return date('Y-m-d H:i:s');
     }
 
     public function followOrUnfollow($userId)
