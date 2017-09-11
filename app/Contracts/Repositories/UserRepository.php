@@ -22,8 +22,6 @@ interface UserRepository extends AbstractRepository
 
     public function getNotifications();
 
-    public function getNotificationsFollow();
-
     public function followOrUnfollow($userId);
 
     public function getFollowInfo($id);
@@ -31,4 +29,6 @@ interface UserRepository extends AbstractRepository
     public function updateViewNotifications($notificationId);
 
     public function countNotificationNotView();
+
+    public function getFavoriteCategory($id);
 }
