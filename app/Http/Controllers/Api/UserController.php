@@ -73,6 +73,7 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() use ($id) {
             $this->compacts['item'] = $this->repository->show($id);
+            $this->compacts['item']['favorite_categories'] = $this->repository->getFavoriteCategory($id);
         });
     }
 
@@ -147,7 +148,6 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['items'] = $this->repository->getNotifications();
-            $this->compacts['itemsFollow'] = $this->repository->getNotificationsFollow();
         });
     }
 

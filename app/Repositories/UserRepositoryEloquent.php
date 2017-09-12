@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\UserRepository;
 use App\Exceptions\Api\ActionException;
 use App\Eloquent\Book;
+use App\Eloquent\Category;
 use App\Eloquent\UserFollow;
 use App\Eloquent\Notification;
 use Illuminate\Support\Facades\Event;
@@ -190,9 +191,20 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->firstOrFail();
     }
 
-    public function getNotificationsFollow()
+    public function getNotifications()
     {
-        return app(Notification::class)
+        $notification = app(Notification::class)
+            ->with([
+                'book',
+                'userSend' => function($query) {
+                    $query->select($this->userSelect);
+                }
+            ])
+            ->where('user_receive_id', $this->user->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(config('paginate.default'));
+
+        $notificationFollow = app(Notification::class)
             ->with([
                 'book',
                 'userSend' => function($query) {
@@ -207,20 +219,9 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             })
             ->orderBy('created_at', 'DESC')
             ->paginate(config('paginate.default'));
-    }
 
-    public function getNotifications()
-    {
-        return app(Notification::class)
-            ->with([
-                'book',
-                'userSend' => function($query) {
-                    $query->select($this->userSelect);
-                }
-            ])
-            ->where('user_receive_id', $this->user->id)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(config('paginate.default'));
+        return compact('notification', 'notificationFollow');
+
     }
 
     public function followOrUnfollow($userId)
@@ -267,8 +268,18 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         $update_view = app(Notification::class)->findOrFail($notificationId)->update(['viewed' => config('model.notification.viewed')]);
     }
 
-    public function countNotificationNotView(){
+    public function countNotificationNotView()
+    {
         $countNoSeen = app(Notification::class)->where('user_receive_id', $this->user->id)->where('viewed', config('model.notification.not_view'))->count();
         return ['count' => $countNoSeen];
+    }
+
+    public function getFavoriteCategory($id)
+    {
+        $user = $this->model()->findOrFail($id);
+        $tags = explode(",", $user['tags']);
+        $categories = app(Category::class)->whereIn('id', $tags)->get();
+
+        return $categories;
     }
 }
