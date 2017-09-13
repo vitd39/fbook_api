@@ -98,6 +98,7 @@ class UserController extends ApiController
     {
         return $this->requestAction(function() {
             $this->compacts['item'] = $this->user;
+            $this->compacts['item']['favorite_categories'] = $this->repository->getFavoriteCategory($this->user->id);
         });
     }
 
