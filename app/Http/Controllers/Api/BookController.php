@@ -92,7 +92,7 @@ class BookController extends ApiController
         return $this->getData(function() use ($relations, $field, $officeId) {
             $data = $this->repository->getBooksByFields($relations, $this->select, $field, [], $officeId);
 
-            $this->compacts['item'] = $this->reFormatPaginate($data);
+            $this->compacts['items'] = $this->reFormatPaginate($data);
         });
     }
 
@@ -219,7 +219,7 @@ class BookController extends ApiController
         return $this->getData(function() use ($relations, $field, $input, $officeId) {
             $data = $this->repository->getBooksByFields($relations, $this->select, $field, $input, $officeId);
 
-            $this->compacts['item'] = $this->reFormatPaginate($data);
+            $this->compacts['items'] = $this->reFormatPaginate($data);
         });
     }
 
@@ -248,7 +248,7 @@ class BookController extends ApiController
             $bookCategory = $this->repository->getBookByCategory($category->id, $this->select, $relations, $officeId);
             $currentPage = $bookCategory->currentPage();
 
-            $this->compacts['item'] = [
+            $this->compacts['items'] = [
                 'total' => $bookCategory->total(),
                 'per_page' => $bookCategory->perPage(),
                 'current_page' => $currentPage,
@@ -290,7 +290,7 @@ class BookController extends ApiController
             $bookCategory = $this->repository->getBookFilteredByCategory($category->id, $input, $this->select, $relations, $officeId);
             $currentPage = $bookCategory->currentPage();
 
-            $this->compacts['item'] = [
+            $this->compacts['items'] = [
                 'total' => $bookCategory->total(),
                 'per_page' => $bookCategory->perPage(),
                 'current_page' => $currentPage,
