@@ -15,7 +15,7 @@
         "laravel/passport": "^2.0",
         "laravel/tinker": "~1.0",
         "league/glide-laravel": "^1.0",
-        "framgia/fauth-php": "dev-master"
+        "framgia/fauth-php": "dev-develop"
     },
     "repositories": [
         {

@@ -24,6 +24,8 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         'office_id',
         'avatar',
         'tags',
+        'employee_code',
+        'workspaces',
     ];
 
     public function model()
@@ -35,12 +37,13 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     {
         $userInDatabase = $this->model()->whereEmail($userFromAuthServer['email'])->first();
         $currentUser = $userInDatabase;
-
         if (!count($userInDatabase)) {
             $currentUser = $this->model()->create([
                 'name' => $userFromAuthServer['name'],
                 'email' => $userFromAuthServer['email'],
                 'avatar' => $userFromAuthServer['avatar'],
+                'employee_code' => $userFromAuthServer['employee_code'],
+                'workspaces' => $userFromAuthServer['workspaces'][0]['name'],
             ])->fresh();
         }
 

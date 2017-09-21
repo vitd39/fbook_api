@@ -26,6 +26,8 @@ class User extends Authenticatable
         'role',
         'office_id',
         'tags',
+        'employee_code',
+        'workspaces',
     ];
 
     /**
