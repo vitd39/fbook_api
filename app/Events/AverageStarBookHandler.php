@@ -13,7 +13,8 @@ class AverageStarBookHandler
         $this->data = $data;
 
         $currentCountReview = $this->data['book']->reviews->count();
-        $newAverageStar = ($this->data['book']->avg_star * $currentCountReview + $this->data['star']) / ($currentCountReview + 1);
+        $newAverageStar = ($this->data['book']->avg_star * ($currentCountReview - 1) + $this->data['star'])
+            / $currentCountReview;
         $this->data['book']->update(['avg_star' => $newAverageStar]);
     }
 }
