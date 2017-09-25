@@ -171,7 +171,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
         return $this->model()
             ->select($dataSelect)
             ->with($with)
-            ->getData(config('model.filter_books.view.field'), $input['filters'])
+            ->getData(config('model.filter_books.rating.field'), $input['filters'])
             ->getBookByOffice($officeId)
             ->orderBy($input['sort']['field'], $input['sort']['type'])
             ->paginate($limit ?: config('paginate.default'));
