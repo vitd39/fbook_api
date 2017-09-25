@@ -30,5 +30,6 @@ class EventServiceProvider extends ServiceProvider
         Event::listen('books.averageStar', 'App\Events\AverageStarBookHandler');
         Event::listen('book.deleted', 'App\Events\DeleteBookHandler');
         Event::listen('notification', 'App\Events\SaveNotificationHandler');
+        Event::listen('count_notification', 'App\Events\NotificationHandler');
     }
 }

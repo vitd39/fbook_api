@@ -201,6 +201,9 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
                 'book',
                 'userSend' => function($query) {
                     $query->select($this->userSelect);
+                },
+                'userReceive' => function($query) {
+                    $query->select($this->userSelect);
                 }
             ])
             ->where('user_receive_id', $this->user->id)
@@ -211,6 +214,9 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->with([
                 'book',
                 'userSend' => function($query) {
+                    $query->select($this->userSelect);
+                },
+                'userReceive' => function($query) {
                     $query->select($this->userSelect);
                 }
             ])
@@ -274,6 +280,7 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     public function countNotificationNotView()
     {
         $countNoSeen = app(Notification::class)->where('user_receive_id', $this->user->id)->where('viewed', config('model.notification.not_view'))->count();
+
         return ['count' => $countNoSeen];
     }
 

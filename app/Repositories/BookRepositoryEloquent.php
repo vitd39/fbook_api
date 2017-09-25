@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Contracts\Repositories\BookRepository;
+use App\Contracts\Repositories\UserRepository;
 use App\Eloquent\Book;
+use App\Eloquent\User;
 use App\Eloquent\BookUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
@@ -15,6 +17,7 @@ use App\Contracts\Repositories\MediaRepository;
 use App\Exceptions\Api\ActionException;
 use App\Traits\Repositories\UploadableTrait;
 use App\Eloquent\Notification;
+use App\Events\NotificationHandler;
 
 class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookRepository
 {
@@ -261,14 +264,17 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     ->updateExistingPivot($this->user->id, [
                         'status' => config('model.book_user.status.returning'),
                     ]);
-                    Event::fire('notification', [
-                        [
-                            'current_user_id' => $this->user->id,
-                            'get_user_id' => $ownerId,
-                            'target_id' => $attributes['item']['book_id'],
-                            'type' => config('model.notification.returning'),
-                        ]
-                    ]);
+
+                $message = '' . $this->user->name . ' want to returing book: ' . $book->title;
+                event(new NotificationHandler($message, $ownerId, config('model.notification.returning')));
+                Event::fire('notification', [
+                    [
+                        'current_user_id' => $this->user->id,
+                        'get_user_id' => $ownerId,
+                        'target_id' => $book->id,
+                        'type' => config('model.notification.returning'),
+                    ]
+                ]);
             } elseif (
                 $checkUser->pivot->status == config('model.book_user.status.waiting')
                 && $attributes['item']['status'] == config('model.book_user_status_cancel')
@@ -276,14 +282,17 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 $book->users()
                     ->wherePivot('status', config('model.book_user.status.waiting'))
                     ->detach($this->user->id);
-                    Event::fire('notification', [
-                        [
-                            'current_user_id' => $this->user->id,
-                            'get_user_id' => $ownerId,
-                            'target_id' => $attributes['item']['book_id'],
-                            'type' => config('model.notification.cancle'),
-                        ]
-                    ]);
+
+                $message = '' . $this->user->name . ' cancel book borrowing : ' . $book->title;
+                event(new NotificationHandler($message, $ownerId, config('model.notification.cancle')));
+                Event::fire('notification', [
+                    [
+                        'current_user_id' => $this->user->id,
+                        'get_user_id' => $ownerId,
+                        'target_id' => $book->id,
+                        'type' => config('model.notification.cancle'),
+                    ]
+                ]);
             } elseif (
                 $checkUser->pivot->status == config('model.book_user.status.returned')
                 && $attributes['item']['status'] == config('model.book_user.status.waiting')
@@ -294,11 +303,14 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);
+
+                $message = '' . $this->user->name . ' waiting to borrow book: ' . $book->title;
+                event(new NotificationHandler($message, $ownerId, config('model.notification.waiting')));
                 Event::fire('notification', [
                     [
                         'current_user_id' => $this->user->id,
                         'get_user_id' => $ownerId,
-                        'target_id' => $attributes['item']['book_id'],
+                        'target_id' => $book->id,
                         'type' => config('model.notification.waiting'),
                     ]
                 ]);
@@ -311,11 +323,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                 'updated_at' => Carbon::now(),
             ]);
 
+            $message = '' . $this->user->name . ' waiting to borrow book: ' . $book->title;
+            event(new NotificationHandler($message, $ownerId, config('model.notification.waiting')));
             Event::fire('notification', [
                 [
                     'current_user_id' => $this->user->id,
                     'get_user_id' => $ownerId,
-                    'target_id' => $attributes['item']['book_id'],
+                    'target_id' => $book->id,
                     'type' => config('model.notification.waiting'),
                 ]
             ]);
@@ -342,6 +356,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             ]);
 
             foreach ($ownersId as $ownerId) {
+                $message = '' . $this->user->name . ' reviewed book: ' . $book->title;
+                event(new NotificationHandler($message, $ownerId, config('model.notification.review')));
                 Event::fire('notification', [
                     [
                         'current_user_id' => $this->user->id,
@@ -638,6 +654,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                         ->wherePivot('status', config('model.book_user.status.waiting'))
                         ->detach($userId);
 
+                    $message = '' . $this->user->name . ' accepted book: ' . $book->title;
+                    event(new NotificationHandler($message, $userId, config('model.notification.approve_waiting')));
                     Event::fire('notification', [
                         [
                             'current_user_id' => $this->user->id,
@@ -663,6 +681,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                         'status' => config('model.book_user.status.returned'),
                     ]);
 
+                    $message = '' . $this->user->name . ' approve returning book: ' . $book->title;
+                    event(new NotificationHandler($message, $userId, config('model.notification.approve_returning')));
                     Event::fire('notification', [
                         [
                             'current_user_id' => $this->user->id,
@@ -687,6 +707,8 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                         'status' => config('model.book_user.status.returning'),
                     ]);
 
+                    $message = '' . $this->user->name . ' unapprove waiting book: ' . $book->title;
+                    event(new NotificationHandler($message, $userId, config('model.notification.unapprove_waiting')));
                     Event::fire('notification', [
                         [
                             'current_user_id' => $this->user->id,
