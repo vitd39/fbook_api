@@ -20,6 +20,9 @@ use App\Contracts\Repositories\MediaRepository;
 use App\Http\Requests\Api\Book\UpdateRequest;
 use App\Http\Requests\Api\Book\UploadMediaRequest;
 use Illuminate\Http\Request;
+use App\Events\NotificationHandler;
+use App\Contracts\Repositories\UserRepository;
+use App\Eloquent\User;
 
 class BookController extends ApiController
 {
