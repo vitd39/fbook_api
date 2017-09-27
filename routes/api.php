@@ -21,6 +21,7 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::post('register', ['as' => 'register', 'uses' => 'RegisterController@create']);
         Route::post('login', ['as' => 'login', 'uses' => 'LoginController@login']);
         Route::post('logout', ['as' => 'logout', 'uses' => 'LoginController@logout']);
+        Route::post('refresh-token', ['as' => 'refresh.token', 'uses' => 'LoginController@refreshToken']);
     });
 
     Route::get('books/sort-by', 'BookController@sortBy');
