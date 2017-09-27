@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\Repositories\UserRepository;
 use App\Exceptions\Api\ActionException;
 use App\Eloquent\Book;
+use App\Eloquent\Office;
 use App\Eloquent\Category;
 use App\Eloquent\UserFollow;
 use App\Eloquent\Notification;
@@ -36,14 +37,39 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     public function getCurrentUser($userFromAuthServer)
     {
         $userInDatabase = $this->model()->whereEmail($userFromAuthServer['email'])->first();
+        $workspaceInfo = $userFromAuthServer['workspaces'][0] ?: NULL;
         $currentUser = $userInDatabase;
-        if (!count($userInDatabase)) {
+        if (isset($workspaceInfo['id'])) {
+            $wsmWorkspace = app(Office::class)->where('wsm_workspace_id', $workspaceInfo['id'])->first();
+            if($wsmWorkspace) {
+                $wsmWorkspace->update([
+                    'name' => $workspaceInfo['name'],
+                    'area' => $workspaceInfo['name'],
+                ]);
+            } else {
+                $wsmWorkspace = app(Office::class)->create([
+                    'name' => $workspaceInfo['name'],
+                    'area' => $workspaceInfo['name'],
+                    'wsm_workspace_id' => $workspaceInfo['id'],
+                ])->fresh();
+            }
+        }
+        $userOfficeId = $wsmWorkspace['id'] ?: NULL;
+        if ($userInDatabase) {
+            $currentUser->update([
+                'name' => $userFromAuthServer['name'],
+                'email' => $userFromAuthServer['email'],
+                'avatar' => $userFromAuthServer['avatar'],
+                'office_id' => $userOfficeId,
+                'employee_code' => $userFromAuthServer['employee_code'],
+            ]);
+        } else {
             $currentUser = $this->model()->create([
                 'name' => $userFromAuthServer['name'],
                 'email' => $userFromAuthServer['email'],
                 'avatar' => $userFromAuthServer['avatar'],
+                'office_id' => $userOfficeId,
                 'employee_code' => $userFromAuthServer['employee_code'],
-                'workspaces' => $userFromAuthServer['workspaces'][0]['name'],
             ])->fresh();
         }
 

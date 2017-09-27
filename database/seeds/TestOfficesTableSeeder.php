@@ -12,6 +12,6 @@ class TestOfficesTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(Office::class, 3)->create();
+        factory(Office::class, 5)->create();
     }
 }
