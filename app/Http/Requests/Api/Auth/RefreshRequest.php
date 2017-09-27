@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\Auth;
 
 use App\Http\Requests\Api\AbstractRequest;
 
-class LoginRequest extends AbstractRequest
+class RefreshRequest extends AbstractRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class LoginRequest extends AbstractRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|max:100',
-            'password' => 'required|min:6|max:64',
+            'refresh_token' => 'required|max:100',
         ];
     }
 }
