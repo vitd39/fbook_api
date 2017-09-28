@@ -11,7 +11,7 @@ class AuthenticateTest extends TestCase
 {
     /* TEST STORE BOOKS */
 
-    public function testLoginSuccess()
+/**    public function testLoginSuccess()
     {
         $headers = $this->getHeaders();
         $data['email'] = env('AUTH_EMAIL_TEST');
@@ -28,7 +28,7 @@ class AuthenticateTest extends TestCase
                 'code' => 200,
             ]
         ])->assertStatus(200);
-    }
+    } */
 
     public function testLoginWithFieldsNull()
     {

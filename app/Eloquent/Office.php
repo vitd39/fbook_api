@@ -15,6 +15,7 @@ class Office extends Model
         'name',
         'area',
         'description',
+        'wsm_workspace_id',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
