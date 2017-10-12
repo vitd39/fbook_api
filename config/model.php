@@ -89,7 +89,7 @@ return [
         'remove_owner' => 'remove_owner',
         'review' => 'review',
         'waiting' => 'waiting',
-        'cancle' =>' cancle',
+        'cancel' =>' cancel',
         'returning' => 'returning',
         'returned' => 'returned',
         'add_book'=> '0',

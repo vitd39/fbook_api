@@ -284,13 +284,13 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     ->detach($this->user->id);
 
                 $message = '' . $this->user->name . ' cancel book borrowing : ' . $book->title;
-                event(new NotificationHandler($message, $ownerId, config('model.notification.cancle')));
+                event(new NotificationHandler($message, $ownerId, config('model.notification.cancel')));
                 Event::fire('notification', [
                     [
                         'current_user_id' => $this->user->id,
                         'get_user_id' => $ownerId,
                         'target_id' => $book->id,
-                        'type' => config('model.notification.cancle'),
+                        'type' => config('model.notification.cancel'),
                     ]
                 ]);
             } elseif (
@@ -706,17 +706,6 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     $book->users()->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.returning'),
                     ]);
-
-                    $message = '' . $this->user->name . ' unapprove waiting book: ' . $book->title;
-                    event(new NotificationHandler($message, $userId, config('model.notification.unapprove_waiting')));
-                    Event::fire('notification', [
-                        [
-                            'current_user_id' => $this->user->id,
-                            'get_user_id' => $userId,
-                            'target_id' => $book->id,
-                            'type' => config('model.notification.unapprove_waiting'),
-                        ]
-                    ]);
                 } else {
                     throw new ActionException('data_invalid');
                 }
@@ -729,6 +718,16 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     ]);
                     $book->users()->updateExistingPivot($userId, [
                         'status' => config('model.book_user.status.waiting'),
+                    ]);
+                    $message = '' . $this->user->name . ' unapprove waiting book: ' . $book->title;
+                    event(new NotificationHandler($message, $userId, config('model.notification.unapprove_waiting')));
+                    Event::fire('notification', [
+                        [
+                            'current_user_id' => $this->user->id,
+                            'get_user_id' => $userId,
+                            'target_id' => $book->id,
+                            'type' => config('model.notification.unapprove_waiting'),
+                        ]
                     ]);
                 } else {
                     throw new ActionException('data_invalid');
