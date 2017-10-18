@@ -31,4 +31,6 @@ interface UserRepository extends AbstractRepository
     public function countNotificationNotView();
 
     public function getFavoriteCategory($id);
+
+    public function updateViewNotificationsAll();
 }
