@@ -281,8 +281,8 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
     {
         $follower_id = $this->model()->findOrFail($id)->usersFollowing->pluck('follower_id');
         $following_id = $this->model()->findOrFail($id)->usersFollower->pluck('following_id');
-        $followedBy = $this->model()->select('id', 'name')->whereIn('id', $follower_id)->orderBy('name')->get();
-        $following = $this->model()->select('id', 'name')->whereIn('id', $following_id)->orderBy('name')->get();
+        $followedBy = $this->model()->select('id', 'name', 'avatar')->whereIn('id', $follower_id)->orderBy('name')->get();
+        $following = $this->model()->select('id', 'name', 'avatar')->whereIn('id', $following_id)->orderBy('name')->get();
         $countFollowed = $followedBy->count();
         $countFollowing = $following->count();
         $isFollow = app(UserFollow::class)
@@ -317,5 +317,10 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
         $categories = app(Category::class)->whereIn('id', $tags)->get();
 
         return $categories;
+    }
+
+    public function updateViewNotificationsAll()
+    {
+        $update_view = app(Notification::class)->where('viewed', config('model.notification.not_view'))->update(['viewed' => config('model.notification.viewed')]);
     }
 }
