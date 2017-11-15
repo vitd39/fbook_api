@@ -152,6 +152,13 @@ class UserController extends ApiController
         });
     }
 
+    public function getNotificationsDropdown()
+    {
+        return $this->requestAction(function() {
+            $this->compacts['items']['notification'] = $this->repository->getNotificationsDropdown();
+        });
+    }
+
     public function followOrUnfollow(FollowRequest $request)
     {
         $data = $request->all();
