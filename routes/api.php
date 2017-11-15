@@ -69,5 +69,6 @@ Route::group(['prefix' => 'v0', 'as' => 'api.v0.', 'namespace' => 'Api'], functi
         Route::get('notification/update/{notification_id}', ['as' => 'notification.update', 'uses' => 'UserController@updateViewNotifications']);
         Route::get('notifications/count/user', ['as' => 'notifications.count', 'uses' => 'UserController@getCountNotifications']);
         Route::post('notifications/update/all', ['as' => 'notifications.update.all', 'uses' => 'UserController@updateViewNotificationsAll']);
+        Route::get('notifications/dropdown', ['as' => 'users.notifications.dropdown', 'uses' => 'UserController@getNotificationsDropdown']);
     });
 });

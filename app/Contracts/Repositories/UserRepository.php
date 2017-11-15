@@ -22,6 +22,8 @@ interface UserRepository extends AbstractRepository
 
     public function getNotifications();
 
+    public function getNotificationsDropdown();
+
     public function followOrUnfollow($userId);
 
     public function getFollowInfo($id);

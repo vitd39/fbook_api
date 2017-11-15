@@ -256,7 +256,25 @@ class UserRepositoryEloquent extends AbstractRepositoryEloquent implements UserR
             ->paginate(config('paginate.default'));
 
         return compact('notification', 'notificationFollow');
+    }
 
+    public function getNotificationsDropdown()
+    {
+        $data = app(Notification::class)
+            ->with([
+                'book',
+                'userSend' => function($query) {
+                    $query->select($this->userSelect);
+                },
+                'userReceive' => function($query) {
+                    $query->select($this->userSelect);
+                }
+            ])
+            ->where('user_receive_id', $this->user->id)
+            ->orderBy('created_at', 'DESC')
+            ->limit(16)->get();
+
+        return compact('data');
     }
 
     public function followOrUnfollow($userId)
