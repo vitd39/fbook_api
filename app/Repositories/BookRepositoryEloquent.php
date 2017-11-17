@@ -322,6 +322,7 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
             $book->users()->attach($this->user->id, [
                 'status' => config('model.book_user.status.waiting'),
                 'owner_id' => $ownerId,
+                'days_to_read' => $attributes['item']['days_to_read'],
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
@@ -741,6 +742,10 @@ class BookRepositoryEloquent extends AbstractRepositoryEloquent implements BookR
                     throw new ActionException('data_invalid');
                 }
             }
+        } elseif ($key == config('settings.book_key.remove_waiting')) {
+            $book->users()
+                ->wherePivot('status', config('model.book_user.status.waiting'))
+                ->detach($userId);
         } else {
             throw new ActionException('data_invalid');
         }

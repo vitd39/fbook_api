@@ -6,6 +6,7 @@ return [
     ],
     'round_average_star' => 2,
     'default_provider' => 'framgia',
+    'default_days_to_read' => 7,
     'book_image_path_default' => 'images/book_default.jpg',
     'image_size' => [
         'thumbnail' => [
@@ -52,5 +53,6 @@ return [
     'book_key' => [
         'approve' => 'approve',
         'unapprove' => 'unapprove',
+        'remove_waiting' => 'remove_waiting',
     ],
 ];
