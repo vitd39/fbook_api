@@ -42,7 +42,7 @@ class Book extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class)->withPivot('status', 'type', 'created_at', 'updated_at' , 'owner_id');
+        return $this->belongsToMany(User::class)->withPivot('status', 'type', 'created_at', 'updated_at' , 'owner_id', 'days_to_read');
     }
 
     public function owners()
